@@ -12,14 +12,13 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
 </head>
 <body>
-  <h3>This is the (updated) Wealthica Example Add-on.</h3>
+  <h3>This is the <strong> updated </strong> Wealthica Example Add-on.</h3>
   <p>Try some of the actions below:</p>
   <p>
     <button type="button" disabled="disabled" id="getTransactions">List Transactions</button>
     <button type="button" disabled="disabled" id="getPositions">List Positions</button>
     <button type="button" disabled="disabled" id="addTransaction">Add Transaction</button>
     <button type="button" disabled="disabled" id="saveData">Save Data</button>
-    <button type="button" disabled="disabled" id="getInstitutions">List Institutions</button>    
   </p>
   <textarea id="data" rows="8" cols="100"></textarea>
   <div id="result"></div>
@@ -75,18 +74,6 @@
           $('#result').html('List Positions Result:<br><code>' + JSON.stringify(response) + '</code>');
         }).catch(function (err) {
           $('#result').html('Error:<br><code>' + err + '</code>');
-        }).finally(function () {
-          $('#getPositions').removeAttr('disabled');
-        });
-      });
-      
-      $('#getInstitutions').on('click', function () {
-        $(this).attr('disabled', 'disabled');
-        
-        addon.api.getInstitutions({ date: '2018-01-01' }).then(function (response) {
-          $('#result').html('List Positions Result:<br><code>' + JSON.stringify(response) + '</code>');
-        }).catch(function (err) {
-           $('#result').html('Error:<br><code>' + err + '</code>'); 
         }).finally(function () {
           $('#getPositions').removeAttr('disabled');
         });
