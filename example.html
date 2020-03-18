@@ -20,7 +20,8 @@
     <button type="button" disabled="disabled" id="getPositions">List Positions</button>
     <button type="button" disabled="disabled" id="addTransaction">Add Transaction</button>
     <button type="button" disabled="disabled" id="saveData">Save Data</button>
-    <button type="button" disabled="disabled" id="getInstitutions">List Institutions</button>    
+    <button type="button" disabled="disabled" id="getInstitutions">List Institutions</button>  
+    <button type="button" disabled="disabled" id="getInstitutionAssests">Get TD Assets</button>    
   </p>
   <textarea id="data" rows="8" cols="100"></textarea>
   <div id="result"></div>
@@ -90,6 +91,25 @@
            $('#result').html('Error:<br><code>' + err + '</code>'); 
         }).finally(function () {
           $('#getPositions').removeAttr('disabled');
+        });
+      });
+
+      $('#getInstitutionAssests').on('click', function () {
+        $(this).attr('disabled', 'disabled');
+        
+        addon.request({
+          method: 'GET',
+          endpoint: 'positions',
+          query: {
+            institutions: '5d3f063d3a9546000409532f',
+            assets: true,
+          }
+        }).then(function (response) {
+          $('#result').html('List Assets Result:<br><code>' + JSON.stringify(response) + '</code>');
+        }).catch(function (err) {
+           $('#result').html('Error:<br><code>' + err + '</code>'); 
+        }).finally(function () {
+          $('#getInstitutionAssests').removeAttr('disabled');
         });
       });
 
