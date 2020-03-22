@@ -106,6 +106,7 @@
           }
         }).then(function (response) {
           $('#result').html('List Assets Result:<br><code>' + JSON.stringify(response) + '</code>');
+          exportToCsvFile(response);
         }).catch(function (err) {
            $('#result').html('Error:<br><code>' + err + '</code>'); 
         }).finally(function () {
