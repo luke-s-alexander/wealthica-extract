@@ -75,7 +75,7 @@
 
         addon.api.getPositions(getQueryFromOptions(addonOptions)).then(function (response) {
           $('#result').html('List Positions Result:<br><code>' + JSON.stringify(response) + '</code>');
-          parseJSONToCSVStr(response);
+          exportPositionsToCsvFile(response);
         }).catch(function (err) {
           $('#result').html('Error:<br><code>' + err + '</code>');
         }).finally(function () {
@@ -107,7 +107,6 @@
           }
         }).then(function (response) {
           $('#result').html('List Assets Result:<br><code>' + JSON.stringify(response) + '</code>');
-          exportToCsvFile(response);
         }).catch(function (err) {
            $('#result').html('Error:<br><code>' + err + '</code>'); 
         }).finally(function () {
