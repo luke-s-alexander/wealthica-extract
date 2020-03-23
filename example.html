@@ -18,8 +18,8 @@
   <p>
     <button type="button" disabled="disabled" id="getTransactions">List Transactions</button>
     <button type="button" disabled="disabled" id="getPositions">List Positions</button>
-    <button type="button" disabled="disabled" id="addTransaction">Add Transaction</button>
-    <button type="button" disabled="disabled" id="saveData">Save Data</button>
+    <!-- <button type="button" disabled="disabled" id="addTransaction">Add Transaction</button> -->
+    <!-- <button type="button" disabled="disabled" id="saveData">Save Data</button> -->
     <button type="button" disabled="disabled" id="getInstitutions">List Institutions</button>  
     <button type="button" disabled="disabled" id="getInstitutionAssests">Get TD Assets</button>    
   </p>
@@ -210,9 +210,8 @@
             csvStr += lineDelimiter
           });
         });
-        console.log(csvStr)
-           // return encodeURIComponent(csvStr);;
-    }
+       return encodeURIComponent(csvStr);
+      }
 
 
       // Parse JSON object into CSV string
