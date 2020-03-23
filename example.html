@@ -75,6 +75,7 @@
 
         addon.api.getPositions(getQueryFromOptions(addonOptions)).then(function (response) {
           $('#result').html('List Positions Result:<br><code>' + JSON.stringify(response) + '</code>');
+          parseJSONToCSVStr(response);
         }).catch(function (err) {
           $('#result').html('Error:<br><code>' + err + '</code>');
         }).finally(function () {
@@ -153,36 +154,71 @@
       }
 
       // Parse JSON object into CSV string
-      function parseJSONToCSVStr(jsonData) {
+      function parsePositionsToCsvFile(jsonData) {
         if(jsonData.length == 0) {
           return '';
         }
-
-        let keys = Object.keys(jsonData[0]);
-
+        // Create array of column headers
+        let keys = [
+            'category', 
+            'class', 
+            'symbol', 
+            'alias', 
+            'investment', 
+            'quantity', 
+            'book_value', 
+            'market_value', 
+            'currency', 
+            'gain_percent', 
+            'gain_amount'
+        ];
+        // Set formats
         let columnDelimiter = ',';
         let lineDelimiter = '\n';
-
+        // Build header
         let csvColumnHeader = keys.join(columnDelimiter);
         let csvStr = csvColumnHeader + lineDelimiter;
-
+        var shared = []
+        // Loop through position results
         jsonData.forEach(item => {
-          keys.forEach((key, index) => {
-              if( (index > 0) && (index < keys.length-1) ) {
-                  csvStr += columnDelimiter;
-              }
-              csvStr += item[key];
+          // Don't print any data at the position level, but capture shared data
+          shared = [ 
+              item.category, 
+              item.class, 
+              item.security.symbol, 
+              item.security.aliases[0] 
+          ];
+          // Loop through investments for each position
+          item.investments.forEach(element => {
+            var investment_data = [
+                element.investment, 
+                element.quantity, 
+                element.book_value, 
+                element.market_value, 
+                element.currency, 
+                element.gain_percent, 
+                element.gain_amount
+            ];
+            // Add investment data to shared position data
+            investment_data = shared.concat(investment_data);
+            // Loop through investment data and create csv row
+            investment_data.forEach((entry, index) => {
+                if( (index > 0) && (index < investment_data.length) ) {
+                    csvStr += columnDelimiter;
+                }
+                csvStr += entry;
+            });
+            csvStr += lineDelimiter
           });
-          csvStr += lineDelimiter;
         });
-
-        return encodeURIComponent(csvStr);;
-       }
+        console.log(csvStr)
+           // return encodeURIComponent(csvStr);;
+    }
 
 
       // Parse JSON object into CSV string
-      function exportToCsvFile(jsonData) {
-          let csvStr = parseJSONToCSVStr(jsonData);
+      function exportPositionsToCsvFile(jsonData) {
+          let csvStr = parsePositionsToCsvFile(jsonData);
           let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
 
           let exportFileDefaultName = 'data.csv';
