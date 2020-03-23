@@ -218,8 +218,11 @@
       function exportPositionsToCsvFile(jsonData) {
           let csvStr = parsePositionsToCsvFile(jsonData);
           let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
+          var today = Date();
+          var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+          var time = today.getHours().toString() + today.getMinutes() + today.getSeconds();
 
-          let exportFileDefaultName = 'data.csv';
+          let exportFileDefaultName = 'positions_' + date + time + '.csv';
 
           let linkElement = document.createElement('a');
           linkElement.setAttribute('href', dataUri);
