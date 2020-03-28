@@ -17,12 +17,12 @@ yarn install
 
 Run build script (create lib and dist directory files)
 ```
-npm run build
+yarn run build
 ```
 
 ### Test
 
 Execute automated test scripts
 ```
-npm run test
+yarn run test
 ```
