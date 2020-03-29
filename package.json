@@ -1,7 +1,7 @@
 {
   "name": "@wealthica/wealthica.js",
   "version": "0.0.10",
-  "description": "Official Wealthica Add-on Library",
+  "description": "Luke's Add-on Library",
   "main": "index.js",
   "scripts": {
     "watch:test": "npm t -- --watch",
