@@ -1,14 +1,9 @@
 # Changelog
 
-## [0.0.9]
-
-### Added
-- Travis CI.
+## [0.0.1]
 
 ### Changed
-- Change editTransaction to receive id string instead of object.
-- Change `scope` to `id` for Addon & AddonContainer initialization.
-- Refine Sample Addon.
+- README (to reflect actual custom project)
 
-### Fixed
-- Fix height calculation method to allow for downsizing.
+### Removed
+- Wealthica Addon code
