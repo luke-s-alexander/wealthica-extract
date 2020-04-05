@@ -843,6 +843,9 @@ hr {
  */
 pre {
   overflow: auto;
+  outline: 1px solid #ccc; 
+  padding: 5px; 
+  margin: 5px;
 }
 /**
  * Address odd `em`-unit font size rendering in all browsers.
