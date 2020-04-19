@@ -69,7 +69,7 @@ $(function () {
   $('#getAssets').on('click', function () {
     $(this).attr('disabled', 'disabled');
     
-    addon.api.getAssets(getQueryFromOptions(addonOptions)).then(function (response) {
+    addon.api.getAssets({ date: '2020-01-01' }).then(function (response) {
       $('#result').html('List Assets Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
     }).catch(function (err) {
        $('#result').html('Error:<br><code>' + err + '</code>'); 
