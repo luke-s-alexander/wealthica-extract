@@ -33,7 +33,7 @@ $(function () {
     $(this).attr('disabled', 'disabled');
 
     addon.api.getTransactions(getQueryFromOptions(addonOptions)).then(function (response) {
-      $('#result').html('List Transactions Result:<br><code>' + JSON.stringify(response) + '</code>');
+      $('#result').html('List Transactions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
     }).catch(function (err) {
       $('#result').html('Error:<br><code>' + err + '</code>');
     }).finally(function () {
@@ -45,7 +45,7 @@ $(function () {
     $(this).attr('disabled', 'disabled');
 
     addon.api.getPositions(getQueryFromOptions(addonOptions)).then(function (response) {
-      $('#result').html('List Positions Result:<br><code>' + JSON.stringify(response) + '</code>');
+      $('#result').html('List Positions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
       exportPositionsToCsvFile(response);
     }).catch(function (err) {
       $('#result').html('Error:<br><code>' + err + '</code>');
