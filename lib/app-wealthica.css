@@ -62741,6 +62741,12 @@ i.wicon.wine:before {
       display: flex;
       -ms-flex-align: center;
           align-items: center; }
+}          
+
+.addon-export__action .sitebutton {
+      padding: 10px 20px !important; 
+}    
+
 
 .addon-plans {
   margin-top: -20px; }
