@@ -66,7 +66,7 @@ $(function () {
     });
   });
 
-  $('#getInstitutionAssests').on('click', function () {
+  $('#getInstitutionAssets').on('click', function () {
     $(this).attr('disabled', 'disabled');
     
     addon.request({
@@ -81,7 +81,7 @@ $(function () {
     }).catch(function (err) {
        $('#result').html('Error:<br><code>' + err + '</code>'); 
     }).finally(function () {
-      $('#getInstitutionAssests').removeAttr('disabled');
+      $('#getInstitutionAssets').removeAttr('disabled');
     });
   });
 
