@@ -171,7 +171,7 @@ $(function () {
         assets: true
       }
     }).then(function (response) {
-      $('#result').html('List Assets Result:<br><code>' + JSON.stringify(response) + '</code>');
+      $('#result').html('List Assets Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
     }).catch(function (err) {
       $('#result').html('Error:<br><code>' + err + '</code>');
     }).finally(function () {
