@@ -69,7 +69,7 @@ $(function () {
   $('#getAssets').on('click', function () {
     $(this).attr('disabled', 'disabled');
     
-    addon.api.getAssets({ date: '2020-01-01' }).then(function (response) {
+    addon.api.getAssets({ date: '2020-04-15' }).then(function (response) {
       $('#result').html('List Assets Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
     }).catch(function (err) {
        $('#result').html('Error:<br><code>' + err + '</code>'); 
@@ -114,6 +114,14 @@ $(function () {
     }).finally(function () {
       $('#saveData').removeAttr('disabled');
     });
+  });
+
+  addon.on('postMessage', function (origin, message) {
+  console.log(arguments);
+  });
+
+  addon.on('gotMessage', function (origin, message) {
+  console.log(arguments);
   });
 
   // Show addon data in result box and optionally update the text input.
