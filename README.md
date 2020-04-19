@@ -1,8 +1,6 @@
 # luke-wealthica.js
 
-[![Build Status](https://travis-ci.org/wealthica/wealthica.js.svg?branch=master)](https://travis-ci.org/wealthica/wealthica.js)
-
-Add-on for Wealthica to export data into csv files
+Add-on for Wealthica to view and export data into csv files
 
 ## Development
 

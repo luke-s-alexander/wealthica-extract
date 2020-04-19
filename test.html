@@ -19,7 +19,7 @@
     <a class="site-button site-button--normal btn-upload-document" id="getPositions">
       <span>Download Positions</span>
     </a>
-    <a class="site-button site-button--normal btn-upload-document" id="getTransactions">
+    <a class="site-button site-button--normal btn-upload-document" paddig-top="10px" id="getTransactions">
       <span>Download Transactions</span>
     </a>
   </div>
@@ -61,7 +61,7 @@
         $(this).attr('disabled', 'disabled');
 
         addon.api.getTransactions(getQueryFromOptions(addonOptions)).then(function (response) {
-          $('#result').html('List Transactions Result:<br><code>' + JSON.stringify(response) + '</code>');
+          $('#result').html('List Transactions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
         }).catch(function (err) {
           $('#result').html('Error:<br><code>' + err + '</code>');
         }).finally(function () {
