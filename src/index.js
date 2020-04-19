@@ -71,7 +71,7 @@ $(function () {
     
     addon.request({
       method: 'GET',
-      endpoint: 'positions',
+      endpoint: 'assets',
       query: {
         institutions: '5d3f063d3a9546000409532f',
         assets: true,
