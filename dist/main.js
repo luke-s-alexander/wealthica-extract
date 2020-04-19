@@ -152,11 +152,23 @@ $(function () {
     $(this).attr('disabled', 'disabled');
 
     addon.api.getInstitutions({ date: '2018-01-01' }).then(function (response) {
-      $('#result').html('List Positions Result:<br><code>' + JSON.stringify(response) + '</code>');
+      $('#result').html('List Institutions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
     }).catch(function (err) {
       $('#result').html('Error:<br><code>' + err + '</code>');
     }).finally(function () {
       $('#getPositions').removeAttr('disabled');
+    });
+  });
+
+  $('#getAssets').on('click', function () {
+    $(this).attr('disabled', 'disabled');
+
+    addon.api.getAssets(addonOptions).then(function (response) {
+      $('#result').html('List Assets Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
+    }).catch(function (err) {
+      $('#result').html('Error:<br><code>' + err + '</code>');
+    }).finally(function () {
+      $('#getAssets').removeAttr('disabled');
     });
   });
 
@@ -201,7 +213,7 @@ $(function () {
 
   // Show addon data in result box and optionally update the text input.
   function showAddonData(data, updateInput) {
-    $('#result').html('Addon data:<br><code>' + JSON.stringify(data) + '</code>');
+    $('#result').html('Addon data:<br><code>' + JSON.stringify(data, null, 2) + '</code>');
     if (updateInput && data) {
       $('#data').val(JSON.stringify(data));
     }
