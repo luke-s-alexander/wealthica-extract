@@ -60821,7 +60821,7 @@ textarea.site-input {
 .site-button {
   display: -ms-inline-flexbox !important;
   display: inline-flex !important;
-  padding: 0 20px !important;
+  padding: 10 20px !important;
   min-width: 115px !important;
   font-size: 1rem !important;
   font-weight: bold !important;
