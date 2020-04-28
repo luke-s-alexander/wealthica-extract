@@ -151,7 +151,7 @@ $(function () {
   $('#getInstitutions').on('click', function () {
     $(this).attr('disabled', 'disabled');
 
-    addon.api.getInstitutions({ date: '2018-01-01' }).then(function (response) {
+    addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
       $('#result').html('List Institutions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
     }).catch(function (err) {
       $('#result').html('Error:<br><code>' + err + '</code>');
