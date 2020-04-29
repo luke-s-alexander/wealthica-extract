@@ -163,7 +163,7 @@ $(function () {
   $('#getAssets').on('click', function () {
     $(this).attr('disabled', 'disabled');
 
-    addon.api.getAssets({ date: '2020-04-15' }).then(function (response) {
+    addon.api.getAssets(getQueryFromOptions(addonOptions)).then(function (response) {
       $('#result').html('List Assets Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
     }).catch(function (err) {
       $('#result').html('Error:<br><code>' + err + '</code>');
@@ -172,24 +172,20 @@ $(function () {
     });
   });
 
-  $('#getInstitutionAssets').on('click', function () {
-    $(this).attr('disabled', 'disabled');
+  // $('#getInstitutionAssets').on('click', function () {
+  //   $(this).attr('disabled', 'disabled');
 
-    addon.request({
-      method: 'GET',
-      endpoint: 'assets',
-      query: {
-        institutions: '5d3f063d3a9546000409532f',
-        assets: true
-      }
-    }).then(function (response) {
-      $('#result').html('List Assets Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
-    }).catch(function (err) {
-      $('#result').html('Error:<br><code>' + err + '</code>');
-    }).finally(function () {
-      $('#getInstitutionAssets').removeAttr('disabled');
-    });
-  });
+  //   addon.request({
+  //     method: 'GET',
+  //     endpoint: 'assets'
+  //   }).then(function (response) {
+  //     $('#result').html('List Assets Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
+  //   }).catch(function (err) {
+  //      $('#result').html('Error:<br><code>' + err + '</code>'); 
+  //   }).finally(function () {
+  //     $('#getInstitutionAssets').removeAttr('disabled');
+  //   });
+  // });
 
   $('#saveData').on('click', function () {
     $(this).attr('disabled', 'disabled');
