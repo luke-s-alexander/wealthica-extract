@@ -225,35 +225,28 @@ $(function () {
     let csvColumnHeader = keys.join(columnDelimiter);
     let csvStr = csvColumnHeader + lineDelimiter;
     var shared = []
-    // Loop through position results
+    // Loop through transaction results
     jsonData.forEach(item => {
       // Don't print any data at the position level, but capture shared data
-      shared = [ 
-          item.investment, 
-          item.type, 
-          item.settlement_date, 
+      row = [ 
+          item.investment,
+          item.type,
+          item.settlement_date,
           item.quantity,
           item.currency_amount,
-          item.fee
+          item.fee,
+          item.security.symbol,
+          item.security.name,
+          item.security.currency
       ];
-      // Loop through investments for each position
-      item.security.forEach(element => {
-        var security_data = [
-            element.symbol, 
-            element.name, 
-            element.currency
-        ];
-        // Add security data to shared transaction data
-        security_data = shared.concat(security_data);
-        // Loop through security data and create csv row
-        security_data.forEach((entry, index) => {
-            if( (index > 0) && (index < security_data.length) ) {
-                csvStr += columnDelimiter;
-            }
-            csvStr += entry;
-        });
-        csvStr += lineDelimiter
+      // Loop through row data and create csv row
+      row.forEach((entry, index) => {
+          if( (index > 0) && (index < row.length) ) {
+              csvStr += columnDelimiter;
+          }
+          csvStr += entry;
       });
+      csvStr += lineDelimiter
     });
    return encodeURIComponent(csvStr);
   };
