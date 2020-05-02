@@ -284,7 +284,7 @@ $(function () {
     // Build header
     var csvColumnHeader = keys.join(columnDelimiter);
     var csvStr = csvColumnHeader + lineDelimiter;
-    var shared = [];
+    var row = [];
     // Loop through transaction results
     jsonData.forEach(function (item) {
       // Don't print any data at the position level, but capture shared data
