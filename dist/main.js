@@ -92,6 +92,8 @@ var main =
 "use strict";
 
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var addon, addonOptions;
 
 $(function () {
@@ -277,7 +279,7 @@ $(function () {
       return '';
     }
     // Create array of column headers
-    var keys = ['investment', 'type', 'settlement_date', 'quantity', 'currency_amount', 'fee', 'symbol', 'name', 'currency'];
+    var keys = ['investment', 'type', 'date', 'quantity', 'currency_amount', 'fee', 'symbol', 'name', 'currency'];
     // Set formats
     var columnDelimiter = ',';
     var lineDelimiter = '\n';
@@ -287,8 +289,16 @@ $(function () {
     var row = [];
     // Loop through transaction results
     jsonData.forEach(function (item) {
-      // Don't print any data at the position level, but capture shared data
-      row = [item.investment, item.type, item.settlement_date, item.quantity, item.currency_amount, item.fee, item.security.symbol, item.security.name, item.security.currency];
+      // Create row from transaction data
+      row = [item.investment, item.type, item.date, item.quantity, item.currency_amount, item.fee];
+      // Check to see if transaction references a security
+      if (_typeof(item.security) === "object") {
+        // Add security data if available
+        row = row.concat([item.security.symbol, item.security.name, item.security.currency]);
+      } else {
+        // Add null placeholders if no security data
+        row.push(null, null, null);
+      };
       // Loop through row data and create csv row
       row.forEach(function (entry, index) {
         if (index > 0 && index < row.length) {

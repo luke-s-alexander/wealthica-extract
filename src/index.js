@@ -210,7 +210,7 @@ $(function () {
     let keys = [
         'investment', 
         'type', 
-        'settlement_date', 
+        'date', 
         'quantity',  
         'currency_amount',  
         'fee',
@@ -227,18 +227,27 @@ $(function () {
     var row = [];
     // Loop through transaction results
     jsonData.forEach(item => {
-      // Don't print any data at the position level, but capture shared data
-      row = [ 
+      // Create row from transaction data
+      row = [  
           item.investment,
           item.type,
-          item.settlement_date,
+          item.date,
           item.quantity,
           item.currency_amount,
-          item.fee,
+          item.fee
+      ];
+      // Check to see if transaction references a security
+      if(typeof item.security === "object") {
+        // Add security data if available
+        row = row.concat([
           item.security.symbol,
           item.security.name,
           item.security.currency
-      ];
+        ]);
+      } else {
+        // Add null placeholders if no security data
+        row.push(null, null, null)
+      };
       // Loop through row data and create csv row
       row.forEach((entry, index) => {
           if( (index > 0) && (index < row.length) ) {
