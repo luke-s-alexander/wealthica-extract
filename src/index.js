@@ -34,6 +34,7 @@ $(function () {
 
     addon.api.getTransactions(getQueryFromOptions(addonOptions)).then(function (response) {
       $('#result').html('List Transactions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
+      exportTransactionsToCsvFile(response);
     }).catch(function (err) {
       $('#result').html('Error:<br><code>' + err + '</code>');
     }).finally(function () {
@@ -139,7 +140,7 @@ $(function () {
     }
   }
 
-  // Parse JSON object into CSV string
+  // Parse Positions JSON object into CSV string
   function parsePositionsToCsvFile(jsonData) {
     if(jsonData.length == 0) {
       return '';
@@ -198,8 +199,80 @@ $(function () {
       });
     });
    return encodeURIComponent(csvStr);
-  }
+  };
 
+// Parse Transactions JSON object into CSV string
+  function parseTransactionsToCsvFile(jsonData) {
+    if(jsonData.length == 0) {
+      return '';
+    }
+    // Create array of column headers
+    let keys = [
+        'investment', 
+        'type', 
+        'settlement_date', 
+        'quantity',  
+        'currency_amount',  
+        'fee',
+        'symbol', 
+        'name', 
+        'currency'
+    ];
+    // Set formats
+    let columnDelimiter = ',';
+    let lineDelimiter = '\n';
+    // Build header
+    let csvColumnHeader = keys.join(columnDelimiter);
+    let csvStr = csvColumnHeader + lineDelimiter;
+    var shared = []
+    // Loop through position results
+    jsonData.forEach(item => {
+      // Don't print any data at the position level, but capture shared data
+      shared = [ 
+          item.investment, 
+          item.type, 
+          item.security.settlement_date, 
+          item.security.quantity,
+          item.security.currency_amount,
+          item.security.fee
+      ];
+      // Loop through investments for each position
+      item.investments.forEach(element => {
+        var investment_data = [
+            element.symbol, 
+            element.name, 
+            element.currency
+        ];
+        // Add investment data to shared position data
+        investment_data = shared.concat(investment_data);
+        // Loop through investment data and create csv row
+        investment_data.forEach((entry, index) => {
+            if( (index > 0) && (index < investment_data.length) ) {
+                csvStr += columnDelimiter;
+            }
+            csvStr += entry;
+        });
+        csvStr += lineDelimiter
+      });
+    });
+   return encodeURIComponent(csvStr);
+  };
+
+  // Parse JSON object into CSV string
+  function exportTransactionsToCsvFile(jsonData) {
+      let csvStr = parseTransactionsToCsvFile(jsonData);
+      let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
+      var today = new Date();
+      var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+      var time = today.getHours().toString() + today.getMinutes() + today.getSeconds();
+
+      let exportFileDefaultName = 'transactions_' + date + time + '.csv';
+
+      let linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+  };
 
   // Parse JSON object into CSV string
   function exportPositionsToCsvFile(jsonData) {
@@ -215,6 +288,6 @@ $(function () {
       linkElement.setAttribute('href', dataUri);
       linkElement.setAttribute('download', exportFileDefaultName);
       linkElement.click();
-  }
+  };
 
 });
