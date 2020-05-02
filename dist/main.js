@@ -288,15 +288,15 @@ $(function () {
     // Loop through position results
     jsonData.forEach(function (item) {
       // Don't print any data at the position level, but capture shared data
-      shared = [item.investment, item.type, item.security.settlement_date, item.security.quantity, item.security.currency_amount, item.security.fee];
+      shared = [item.investment, item.type, item.settlement_date, item.quantity, item.currency_amount, item.fee];
       // Loop through investments for each position
-      item.investments.forEach(function (element) {
-        var investment_data = [element.symbol, element.name, element.currency];
-        // Add investment data to shared position data
-        investment_data = shared.concat(investment_data);
-        // Loop through investment data and create csv row
-        investment_data.forEach(function (entry, index) {
-          if (index > 0 && index < investment_data.length) {
+      item.security.forEach(function (element) {
+        var security_data = [element.symbol, element.name, element.currency];
+        // Add security data to shared transaction data
+        security_data = shared.concat(security_data);
+        // Loop through security data and create csv row
+        security_data.forEach(function (entry, index) {
+          if (index > 0 && index < security_data.length) {
             csvStr += columnDelimiter;
           }
           csvStr += entry;
