@@ -231,23 +231,23 @@ $(function () {
       shared = [ 
           item.investment, 
           item.type, 
-          item.security.settlement_date, 
-          item.security.quantity,
-          item.security.currency_amount,
-          item.security.fee
+          item.settlement_date, 
+          item.quantity,
+          item.currency_amount,
+          item.fee
       ];
       // Loop through investments for each position
-      item.investments.forEach(element => {
-        var investment_data = [
+      item.security.forEach(element => {
+        var security_data = [
             element.symbol, 
             element.name, 
             element.currency
         ];
-        // Add investment data to shared position data
-        investment_data = shared.concat(investment_data);
-        // Loop through investment data and create csv row
-        investment_data.forEach((entry, index) => {
-            if( (index > 0) && (index < investment_data.length) ) {
+        // Add security data to shared transaction data
+        security_data = shared.concat(security_data);
+        // Loop through security data and create csv row
+        security_data.forEach((entry, index) => {
+            if( (index > 0) && (index < security_data.length) ) {
                 csvStr += columnDelimiter;
             }
             csvStr += entry;
