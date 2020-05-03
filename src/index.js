@@ -208,7 +208,9 @@ $(function () {
     }
     // Create array of column headers
     let keys = [
-        'investment', 
+        'account',
+        'account_type',
+        'account_currency', 
         'type', 
         'date', 
         'quantity',  
@@ -225,11 +227,14 @@ $(function () {
     let csvColumnHeader = keys.join(columnDelimiter);
     let csvStr = csvColumnHeader + lineDelimiter;
     var row = [];
+    var parsedInvestment = [];
     // Loop through transaction results
     jsonData.forEach(item => {
       // Create row from transaction data
+      investment = item.investment;
+      parsedInvestment = investment.split(":")
       row = [  
-          item.investment,
+          parsedInvestment,
           item.type,
           item.date,
           item.quantity,
