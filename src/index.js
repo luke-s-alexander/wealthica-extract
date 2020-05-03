@@ -227,12 +227,12 @@ $(function () {
     let csvColumnHeader = keys.join(columnDelimiter);
     let csvStr = csvColumnHeader + lineDelimiter;
     var row = [];
-    var parsedInvestment = [];
     // Loop through transaction results
     jsonData.forEach(item => {
       // Create row from transaction data
-      investment = item.investment;
-      parsedInvestment = investment.split(":")
+      let investment = item.investment;
+      let parsedInvestment = investment.split(":");
+      
       row = [  
           parsedInvestment,
           item.type,

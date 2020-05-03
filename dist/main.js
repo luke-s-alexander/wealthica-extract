@@ -287,12 +287,12 @@ $(function () {
     var csvColumnHeader = keys.join(columnDelimiter);
     var csvStr = csvColumnHeader + lineDelimiter;
     var row = [];
-    var parsedInvestment = [];
     // Loop through transaction results
     jsonData.forEach(function (item) {
       // Create row from transaction data
-      investment = item.investment;
-      parsedInvestment = investment.split(":");
+      var investment = item.investment;
+      var parsedInvestment = investment.split(":");
+
       row = [parsedInvestment, item.type, item.date, item.quantity, item.currency_amount, item.fee];
       // Check to see if transaction references a security
       if (_typeof(item.security) === "object") {
