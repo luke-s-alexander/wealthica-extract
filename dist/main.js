@@ -243,7 +243,7 @@ $(function () {
       return '';
     }
     // Create array of column headers
-    var keys = ['category', 'class', 'symbol', 'alias', 'investment', 'quantity', 'book_value', 'market_value', 'currency', 'gain_percent', 'gain_amount'];
+    var keys = ['category', 'class', 'symbol', 'alias', 'account', 'account_type', 'account_currency', 'quantity', 'book_value', 'market_value', 'gain_percent', 'gain_amount'];
     // Set formats
     var columnDelimiter = ',';
     var lineDelimiter = '\n';
@@ -257,7 +257,10 @@ $(function () {
       shared = [item.category, item.class, item.security.symbol, item.security.aliases[0]];
       // Loop through investments for each position
       item.investments.forEach(function (element) {
-        var investment_data = [element.investment, element.quantity, element.book_value, element.market_value, element.currency, element.gain_percent, element.gain_amount];
+        var investment = element.investment;
+        var parsedInvestment = investment.split(":");
+
+        var investment_data = [parsedInvestment, element.quantity, element.book_value, element.market_value, element.gain_percent, element.gain_amount];
         // Add investment data to shared position data
         investment_data = shared.concat(investment_data);
         // Loop through investment data and create csv row
@@ -279,7 +282,7 @@ $(function () {
       return '';
     }
     // Create array of column headers
-    var keys = ['account', 'account_type', 'account_currency', 'type', 'date', 'quantity', 'currency_amount', 'fee', 'symbol', 'name', 'currency'];
+    var keys = ['account', 'account_type', 'account_currency', 'type', 'date', 'quantity', 'currency_amount', 'fee', 'symbol', 'name'];
     // Set formats
     var columnDelimiter = ',';
     var lineDelimiter = '\n';
@@ -297,10 +300,10 @@ $(function () {
       // Check to see if transaction references a security
       if (_typeof(item.security) === "object") {
         // Add security data if available
-        row = row.concat([item.security.symbol, item.security.name, item.security.currency]);
+        row = row.concat([item.security.symbol, item.security.name]);
       } else {
         // Add null placeholders if no security data
-        row.push(null, null, null);
+        row.push(null, null);
       };
       // Loop through row data and create csv row
       row.forEach(function (entry, index) {

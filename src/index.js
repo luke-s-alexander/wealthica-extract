@@ -151,11 +151,12 @@ $(function () {
         'class', 
         'symbol', 
         'alias', 
-        'investment', 
+        'account',
+        'account_type',
+        'account_currency', 
         'quantity', 
         'book_value', 
         'market_value', 
-        'currency', 
         'gain_percent', 
         'gain_amount'
     ];
@@ -177,12 +178,14 @@ $(function () {
       ];
       // Loop through investments for each position
       item.investments.forEach(element => {
+        var investment = element.investment;
+        var parsedInvestment = investment.split(":");
+
         var investment_data = [
-            element.investment, 
+            parsedInvestment, 
             element.quantity, 
             element.book_value, 
             element.market_value, 
-            element.currency, 
             element.gain_percent, 
             element.gain_amount
         ];
@@ -217,8 +220,7 @@ $(function () {
         'currency_amount',  
         'fee',
         'symbol', 
-        'name', 
-        'currency'
+        'name'
     ];
     // Set formats
     let columnDelimiter = ',';
@@ -232,7 +234,7 @@ $(function () {
       // Create row from transaction data
       let investment = item.investment;
       let parsedInvestment = investment.split(":");
-      
+
       row = [  
           parsedInvestment,
           item.type,
@@ -246,12 +248,11 @@ $(function () {
         // Add security data if available
         row = row.concat([
           item.security.symbol,
-          item.security.name,
-          item.security.currency
+          item.security.name
         ]);
       } else {
         // Add null placeholders if no security data
-        row.push(null, null, null)
+        row.push(null, null)
       };
       // Loop through row data and create csv row
       row.forEach((entry, index) => {
