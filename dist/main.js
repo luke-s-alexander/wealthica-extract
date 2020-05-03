@@ -279,7 +279,7 @@ $(function () {
       return '';
     }
     // Create array of column headers
-    var keys = ['investment', 'type', 'date', 'quantity', 'currency_amount', 'fee', 'symbol', 'name', 'currency'];
+    var keys = ['account', 'account_type', 'account_currency', 'type', 'date', 'quantity', 'currency_amount', 'fee', 'symbol', 'name', 'currency'];
     // Set formats
     var columnDelimiter = ',';
     var lineDelimiter = '\n';
@@ -287,10 +287,13 @@ $(function () {
     var csvColumnHeader = keys.join(columnDelimiter);
     var csvStr = csvColumnHeader + lineDelimiter;
     var row = [];
+    var parsedInvestment = [];
     // Loop through transaction results
     jsonData.forEach(function (item) {
       // Create row from transaction data
-      row = [item.investment, item.type, item.date, item.quantity, item.currency_amount, item.fee];
+      investment = item.investment;
+      parsedInvestment = investment.split(":");
+      row = [parsedInvestment, item.type, item.date, item.quantity, item.currency_amount, item.fee];
       // Check to see if transaction references a security
       if (_typeof(item.security) === "object") {
         // Add security data if available
