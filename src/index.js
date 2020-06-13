@@ -202,7 +202,13 @@ $(function () {
         csvStr += lineDelimiter
       });
     });
-   return encodeURIComponent(csvStr);
+    // Add cash balances
+    addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
+      var cashJSON = response;
+    });
+    
+    var cashCsv = parseInstitutionsToCsvFile(cashJSON);
+   return encodeURIComponent(csvStr.cashCsv);
   };
 
 // Parse Institutions Cash into CSV string
@@ -367,7 +373,7 @@ $(function () {
       linkElement.click();
   };
 
-    // Parse Institutions JSON object into CSV string
+  // Parse Institutions JSON object into CSV string
   function exportInstitutionsToCsvFile(jsonData) {
       let csvStr = parseInstitutionsToCsvFile(jsonData);
       let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
