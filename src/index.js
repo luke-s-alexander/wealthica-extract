@@ -243,8 +243,6 @@ $(function () {
       ];
       // Loop through investments for each position
       item.investments.forEach(element => {
-        // var investment = element.investment;
-        // var parsedInvestment = investment.split(":");
 
         var investment_data = [
             element.id,
@@ -259,13 +257,15 @@ $(function () {
         // Add investment data to shared position data
         investment_data = shared.concat(investment_data);
         // Loop through investment data and create csv row
-        investment_data.forEach((entry, index) => {
-            if( (index > 0) && (index < investment_data.length) ) {
-                csvStr += columnDelimiter;
-            }
-            csvStr += entry;
-        });
-        csvStr += lineDelimiter
+        if( (investment_data[9] != 0) ) {
+          investment_data.forEach((entry, index) => {
+              if( (index > 0) && (index < investment_data.length) ) {
+                  csvStr += columnDelimiter;
+              }
+              csvStr += entry;
+          });
+          csvStr += lineDelimiter
+        };
       });
     });
    return encodeURIComponent(csvStr);
