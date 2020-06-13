@@ -60,7 +60,7 @@ $(function () {
     
     addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
       $('#result').html('List Institutions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
-      exportInstitutionssToCsvFile(response);
+      exportInstitutionsToCsvFile(response);
     }).catch(function (err) {
        $('#result').html('Error:<br><code>' + err + '</code>'); 
     }).finally(function () {
@@ -368,7 +368,7 @@ $(function () {
   };
 
     // Parse Institutions JSON object into CSV string
-  function exportInstitutionsoCsvFile(jsonData) {
+  function exportInstitutionsToCsvFile(jsonData) {
       let csvStr = parseInstitutionsToCsvFile(jsonData);
       let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
       var today = new Date();
