@@ -275,9 +275,8 @@ $(function () {
       });
     });
     // Add cash balances
-    addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
-      var cashJSON = response;
-      return cashJSON;
+    var cashJSON = addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
+      return response;
     });
 
     var cashCsv = parseInstitutionsToCsvFile(cashJSON);
