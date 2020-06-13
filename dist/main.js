@@ -278,9 +278,9 @@ $(function () {
     var cashJSON = addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
       return response;
     });
-
+    console.log(cashJSON);
     var cashCsv = parseInstitutionsToCsvFile(cashJSON);
-    return encodeURIComponent(csvStr.cashCsv);
+    return encodeURIComponent(csvStr.concat(cashCsv));
   };
 
   // Parse Institutions Cash into CSV string
