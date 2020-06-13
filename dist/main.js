@@ -156,6 +156,7 @@ $(function () {
 
     addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
       $('#result').html('List Institutions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
+      exportInstitutionssToCsvFile(response);
     }).catch(function (err) {
       $('#result').html('Error:<br><code>' + err + '</code>');
     }).finally(function () {
@@ -276,6 +277,45 @@ $(function () {
     return encodeURIComponent(csvStr);
   };
 
+  // Parse Institutions Cash into CSV string
+  function parseInstitutionsToCsvFile(jsonData) {
+    if (jsonData.length == 0) {
+      return '';
+    }
+    // Create array of column headers
+    var keys = ['category', 'class', 'symbol', 'alias', 'account', 'account_type', 'account_currency', 'quantity', 'book_value', 'market_value', 'gain_percent', 'gain_amount'];
+    // Set formats
+    var columnDelimiter = ',';
+    var lineDelimiter = '\n';
+    // Build header
+    var csvColumnHeader = keys.join(columnDelimiter);
+    var csvStr = csvColumnHeader + lineDelimiter;
+    var shared = [];
+    // Loop through position results
+    jsonData.forEach(function (item) {
+      // Don't print any data at the position level, but capture shared data
+      shared = ['Cash', null, 'Cash', null];
+      // Loop through investments for each position
+      item.investments.forEach(function (element) {
+        // var investment = element.investment;
+        // var parsedInvestment = investment.split(":");
+
+        var investment_data = [element.id, element.type, element.currency, null, null, element.cash, null, null];
+        // Add investment data to shared position data
+        investment_data = shared.concat(investment_data);
+        // Loop through investment data and create csv row
+        investment_data.forEach(function (entry, index) {
+          if (index > 0 && index < investment_data.length) {
+            csvStr += columnDelimiter;
+          }
+          csvStr += entry;
+        });
+        csvStr += lineDelimiter;
+      });
+    });
+    return encodeURIComponent(csvStr);
+  };
+
   // Parse Transactions JSON object into CSV string
   function parseTransactionsToCsvFile(jsonData) {
     if (jsonData.length == 0) {
@@ -342,6 +382,22 @@ $(function () {
     var time = today.getHours().toString() + today.getMinutes() + today.getSeconds();
 
     var exportFileDefaultName = 'positions_' + date + time + '.csv';
+
+    var linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
+  // Parse Institutions JSON object into CSV string
+  function exportInstitutionsoCsvFile(jsonData) {
+    var csvStr = parseInstitutionsToCsvFile(jsonData);
+    var dataUri = 'data:text/csv;charset=utf-8,' + csvStr;
+    var today = new Date();
+    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    var time = today.getHours().toString() + today.getMinutes() + today.getSeconds();
+
+    var exportFileDefaultName = 'cash_' + date + time + '.csv';
 
     var linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
