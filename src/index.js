@@ -208,7 +208,7 @@ $(function () {
     });
 
     // var cashCsv = parseInstitutionsToCsvFile(cashJSON);
-    // csvStr = csvStr.concat(cashCsv);
+    csvStr = csvStr.concat(cashCsv);
    // return encodeURIComponent(csvStr.concat(cashCsv));
    return encodeURIComponent(csvStr);
   };
