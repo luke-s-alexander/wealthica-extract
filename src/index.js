@@ -63,7 +63,7 @@ $(function () {
     }).catch(function (err) {
        $('#result').html('Error:<br><code>' + err + '</code>'); 
     }).finally(function () {
-      $('#getPositions').removeAttr('disabled');
+      $('#getInstitutions').removeAttr('disabled');
     });
   });
 
