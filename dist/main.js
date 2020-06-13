@@ -278,8 +278,9 @@ $(function () {
     var cashJSON = addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
       return response;
     });
-    console.log(cashJSON);
-    //  var cashCsv = parseInstitutionsToCsvFile(cashJSON);
+
+    var cashCsv = parseInstitutionsToCsvFile(cashJSON);
+    csvStr = csvStr.concat(cashCsv);
     // return encodeURIComponent(csvStr.concat(cashCsv));
     return encodeURIComponent(csvStr);
   };
