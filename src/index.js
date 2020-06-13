@@ -207,8 +207,9 @@ $(function () {
       return response;
     });
     console.log(cashJSON);
-    var cashCsv = parseInstitutionsToCsvFile(cashJSON);
-   return encodeURIComponent(csvStr.concat(cashCsv));
+   //  var cashCsv = parseInstitutionsToCsvFile(cashJSON);
+   // return encodeURIComponent(csvStr.concat(cashCsv));
+   return encodeURIComponent(csvStr);
   };
 
 // Parse Institutions Cash into CSV string
