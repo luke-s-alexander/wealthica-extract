@@ -205,6 +205,7 @@ $(function () {
     // Add cash balances
     var cashCsv = addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
       return parseInstitutionsToCsvFile(response);
+      $('#result').html('CASH CAV:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
     });
 
     // var cashCsv = parseInstitutionsToCsvFile(cashJSON);
