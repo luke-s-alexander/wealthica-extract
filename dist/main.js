@@ -276,8 +276,9 @@ $(function () {
     });
     // Add cash balances
     var cashCsv = addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
-      return parseInstitutionsToCsvFile(response);
-      $('#result').html('CASH CAV:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
+      csv = parseInstitutionsToCsvFile(response);
+      $('#result').html('CASH CAV:<br><code>' + JSON.stringify(csv, null, 2) + '</code>');
+      return csv;
     });
 
     // var cashCsv = parseInstitutionsToCsvFile(cashJSON);
