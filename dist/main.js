@@ -292,12 +292,14 @@ $(function () {
       // call the parse Institutions fn to get csv string back (not file):
       var csv = parseInstitutionsToCsvFile(response);
       // function returns the new csv file from parse Institutions
-      console.log(csv);
+      // Check that csv is correct - Confirmed
+      // console.log(csv);
       return csv;
     }).catch(function (err) {
       // catch errors in console
       console.log(err);
     });
+    console.log(cashCsv);
     // var cashCsv = parseInstitutionsToCsvFile(cashJSON);
     // Add Institutions (cash) csv to the positions csv:
     csvStr = csvStr.concat(cashCsv);
