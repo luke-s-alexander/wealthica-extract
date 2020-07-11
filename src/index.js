@@ -218,7 +218,7 @@ $(function () {
 	// Call the getInstitutions API for cash balances and set the function response to variable cashCsv
     var cashCsv = addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
     	// call the parse Institutions fn to get csv string back (not file):
-      csv = parseInstitutionsToCsvFile(response);
+      var csv = parseInstitutionsToCsvFile(response);
       // function returns the new csv file from parse Institutions
       return csv
     }).catch(function (err) {
