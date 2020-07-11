@@ -227,7 +227,8 @@ $(function () {
     	// catch errors in console
     	console.log(err);
     });
-    console.log(cashCsv);
+
+    console.log(JSON.stringify(cashCsv));
     // var cashCsv = parseInstitutionsToCsvFile(cashJSON);
     // Add Institutions (cash) csv to the positions csv:
     csvStr = csvStr.concat(cashCsv);
