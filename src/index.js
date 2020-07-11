@@ -203,12 +203,30 @@ $(function () {
       });
     });
     // Add cash balances
+
+	    // Copied directly from the getInstitutions button above, for reference:
+		    // addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
+		    //   $('#result').html('List Institutions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
+		    //   exportInstitutionsToCsvFile(response);
+		    // }).catch(function (err) {
+		    //    $('#result').html('Error:<br><code>' + err + '</code>'); 
+		    // }).finally(function () {
+		    //   $('#getInstitutions').removeAttr('disabled');
+		    // });
+
+	// Actual function for case balances:
+	// Call the getInstitutions API for cash balances and set the function response to variable cashCsv
     var cashCsv = addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
-      csv = parseInstitutionsToCsvFile(JSON.stringify(response, null, 2));
-      // $('#result').html('CASH CAV:<br><code>' + JSON.stringify(csv, null, 2) + '</code>');
+    	// call the parse Institutions fn to get csv string back (not file):
+      csv = parseInstitutionsToCsvFile(response);
+      // function returns the new csv file from parse Institutions
       return csv
+    }).catch(function (err) {
+    	// catch errors in console
+    	console.log(err);
     });
     // var cashCsv = parseInstitutionsToCsvFile(cashJSON);
+    // Add Institutions (cash) csv to the positions csv:
     csvStr = csvStr.concat(cashCsv);
    // return encodeURIComponent(csvStr.concat(cashCsv));
    return encodeURIComponent(csvStr);
