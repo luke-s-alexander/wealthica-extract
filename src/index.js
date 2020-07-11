@@ -220,6 +220,7 @@ $(function () {
     	// call the parse Institutions fn to get csv string back (not file):
       var csv = parseInstitutionsToCsvFile(response);
       // function returns the new csv file from parse Institutions
+      console.log(csv)
       return csv
     }).catch(function (err) {
     	// catch errors in console
