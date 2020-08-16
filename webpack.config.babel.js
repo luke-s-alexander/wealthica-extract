@@ -7,7 +7,10 @@ import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 const include = path.join(__dirname, 'src');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: {
+    main: './src/index.js',
+    test: './src/test.js',
+  },
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
