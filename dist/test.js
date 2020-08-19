@@ -95,9 +95,95 @@ var test =
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 var addon, addonOptions;
 
 $(function () {
+
+  // Parse Positions JSON object into CSV string
+  var parsePositionsToCsvFile = function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(jsonData) {
+      var cashJSON, cashCsv, keys, columnDelimiter, lineDelimiter, csvColumnHeader, csvStr, shared;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (!(jsonData.length == 0)) {
+                _context.next = 2;
+                break;
+              }
+
+              return _context.abrupt('return', '');
+
+            case 2:
+              ;
+
+              // Call the getInstitutions API for cash balances and set the function response to variable cashCsv
+              _context.next = 5;
+              return addon.api.getInstitutions(getQueryFromOptions(addonOptions));
+
+            case 5:
+              cashJSON = _context.sent;
+              _context.next = 8;
+              return parseInstitutionsToCsvFile(cashJSON);
+
+            case 8:
+              cashCsv = _context.sent;
+
+
+              // Create array of column headers
+              keys = ['category', 'class', 'symbol', 'alias', 'account', 'account_type', 'account_currency', 'quantity', 'book_value', 'market_value', 'gain_percent', 'gain_amount'];
+              // Set formats
+
+              columnDelimiter = ',';
+              lineDelimiter = '\n';
+              // Build header
+
+              csvColumnHeader = keys.join(columnDelimiter);
+              csvStr = csvColumnHeader + lineDelimiter;
+              shared = [];
+              // Loop through position results
+
+              jsonData.forEach(function (item) {
+                // Don't print any data at the position level, but capture shared data
+                shared = [item.category, item.class, item.security.symbol, item.security.aliases[0]];
+                // Loop through investments for each position
+                item.investments.forEach(function (element) {
+                  var investment = element.investment;
+                  var parsedInvestment = investment.split(":");
+
+                  var investment_data = [parsedInvestment, element.quantity, element.book_value, element.market_value, element.gain_percent, element.gain_amount];
+                  // Add investment data to shared position data
+                  investment_data = shared.concat(investment_data);
+                  // Loop through investment data and create csv row
+                  investment_data.forEach(function (entry, index) {
+                    if (index > 0 && index < investment_data.length) {
+                      csvStr += columnDelimiter;
+                    }
+                    csvStr += entry;
+                  });
+                  csvStr += lineDelimiter;
+                });
+
+                csvStr = csvStr.concat(cashCsv);
+
+                return encodeURIComponent(csvStr);
+              });
+
+            case 16:
+            case 'end':
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }));
+
+    return function parsePositionsToCsvFile(_x) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
   addon = new Addon();
 
   addon.on('init', function (options) {
@@ -237,64 +323,6 @@ $(function () {
       institutions: options.institutionsFilter,
       investments: options.investmentsFilter === 'all' ? null : options.investmentsFilter
     };
-  }
-
-  // Parse Positions JSON object into CSV string
-  function parsePositionsToCsvFile(jsonData) {
-    // Call the getInstitutions API for cash balances and set the function response to variable cashCsv
-    var cashCsv = addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
-      // call the parse Institutions fn to get csv string back (not file):
-      var csv = parseInstitutionsToCsvFile(response);
-      // function returns the new csv file from parse Institutions
-      // Check that csv is correct - Confirmed
-      // console.log(csv);
-      return csv;
-    }).then(function (csv) {
-      if (jsonData.length == 0) {
-        return '';
-      }
-      // Create array of column headers
-      var keys = ['category', 'class', 'symbol', 'alias', 'account', 'account_type', 'account_currency', 'quantity', 'book_value', 'market_value', 'gain_percent', 'gain_amount'];
-      // Set formats
-      var columnDelimiter = ',';
-      var lineDelimiter = '\n';
-      // Build header
-      var csvColumnHeader = keys.join(columnDelimiter);
-      var csvStr = csvColumnHeader + lineDelimiter;
-      var shared = [];
-      // Loop through position results
-      jsonData.forEach(function (item) {
-        // Don't print any data at the position level, but capture shared data
-        shared = [item.category, item.class, item.security.symbol, item.security.aliases[0]];
-        // Loop through investments for each position
-        item.investments.forEach(function (element) {
-          var investment = element.investment;
-          var parsedInvestment = investment.split(":");
-
-          var investment_data = [parsedInvestment, element.quantity, element.book_value, element.market_value, element.gain_percent, element.gain_amount];
-          // Add investment data to shared position data
-          investment_data = shared.concat(investment_data);
-          // Loop through investment data and create csv row
-          investment_data.forEach(function (entry, index) {
-            if (index > 0 && index < investment_data.length) {
-              csvStr += columnDelimiter;
-            }
-            csvStr += entry;
-          });
-          csvStr += lineDelimiter;
-        });
-
-        console.log(JSON.stringify(cashCsv));
-        // var cashCsv = parseInstitutionsToCsvFile(cashJSON);
-        // Add Institutions (cash) csv to the positions csv:
-        csvStr = csvStr.concat(cashCsv);
-        // return encodeURIComponent(csvStr.concat(cashCsv));
-        return encodeURIComponent(csvStr);
-      });
-    }).catch(function (err) {
-      // catch errors in console
-      console.log(err);
-    });
   };
 
   // Parse Institutions Cash into CSV string
