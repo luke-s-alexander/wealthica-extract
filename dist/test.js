@@ -109,26 +109,28 @@ $(function () {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
+              _context.prev = 0;
+
               if (!(jsonData.length == 0)) {
-                _context.next = 2;
+                _context.next = 3;
                 break;
               }
 
               return _context.abrupt('return', '');
 
-            case 2:
+            case 3:
               ;
 
               // Call the getInstitutions API for cash balances and set the function response to variable cashCsv
-              _context.next = 5;
+              _context.next = 6;
               return addon.api.getInstitutions(getQueryFromOptions(addonOptions));
 
-            case 5:
+            case 6:
               cashJSON = _context.sent;
-              _context.next = 8;
+              _context.next = 9;
               return parseInstitutionsToCsvFile(cashJSON);
 
-            case 8:
+            case 9:
               cashCsv = _context.sent;
 
 
@@ -170,13 +172,21 @@ $(function () {
 
                 return encodeURIComponent(csvStr);
               });
+              _context.next = 22;
+              break;
 
-            case 16:
+            case 19:
+              _context.prev = 19;
+              _context.t0 = _context['catch'](0);
+
+              console.log(_context.t0);
+
+            case 22:
             case 'end':
               return _context.stop();
           }
         }
-      }, _callee, this);
+      }, _callee, this, [[0, 19]]);
     }));
 
     return function parsePositionsToCsvFile(_x) {
