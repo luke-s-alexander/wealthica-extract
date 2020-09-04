@@ -368,8 +368,8 @@ $(function () {
   };
 
   // Parse JSON object into CSV string
-  function exportPositionsToCsvFile(jsonData) {
-      let csvStr = parsePositionsToCsvFile(jsonData);
+  async function exportPositionsToCsvFile(jsonData) {
+      let csvStr = await parsePositionsToCsvFile(jsonData);
       let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
       var today = new Date();
       var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
