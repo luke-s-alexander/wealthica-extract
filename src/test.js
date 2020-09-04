@@ -155,7 +155,7 @@ $(function () {
       }).catch(function (err) {
       console.log(err)
       });
-
+      console.log(cashCsv);
       // Create array of column headers
       let keys = [
           'category', 
