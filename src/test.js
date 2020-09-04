@@ -211,11 +211,10 @@ $(function () {
           }); 
           csvStr += lineDelimiter
         });
-
-        csvStr = csvStr.concat(cashCsv);
-
-        return encodeURIComponent(csvStr);
       });
+      csvStr = csvStr.concat(cashCsv);
+  //    console.log(encodeURIComponent(csvStr));
+      return encodeURIComponent(csvStr);
     } catch (error) { 
       console.log(error)
     }
@@ -246,16 +245,17 @@ $(function () {
     let lineDelimiter = '\n';
     // Build header
     let csvColumnHeader = keys.join(columnDelimiter);
-    let csvStr = csvColumnHeader + lineDelimiter;
+    // Don't set column headers (assume it's set by parent function)
+    let csvStr = "";
     var shared = []
     // Loop through position results
     jsonData.forEach(item => {
       // Don't print any data at the position level, but capture shared data
       shared = [ 
           'Cash', 
-          null, 
-         'Cash', 
-          null 
+          'cash', 
+          'Cash', 
+           null 
       ];
       // Loop through investments for each position
       item.investments.forEach(element => {
@@ -265,7 +265,7 @@ $(function () {
             element.type,
             element.currency, 
             null, 
-            null, 
+            element.cash, 
             element.cash, 
             null, 
             null
@@ -284,7 +284,7 @@ $(function () {
         };
       });
     });
-   return encodeURIComponent(csvStr);
+   return csvStr;
   };
 
 
@@ -352,7 +352,7 @@ $(function () {
   };
 
   // Parse JSON object into CSV string
-  function exportTransactionsToCsvFile(jsonData) {
+ function exportTransactionsToCsvFile(jsonData) {
       let csvStr = parseTransactionsToCsvFile(jsonData);
       let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
       var today = new Date();
@@ -370,6 +370,7 @@ $(function () {
   // Parse JSON object into CSV string
   async function exportPositionsToCsvFile(jsonData) {
       let csvStr = await parsePositionsToCsvFile(jsonData);
+      console.log(csvStr);
       let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
       var today = new Date();
       var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
