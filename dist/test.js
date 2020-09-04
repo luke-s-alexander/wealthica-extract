@@ -104,7 +104,7 @@ $(function () {
   // Parse Positions JSON object into CSV string
   var parsePositionsToCsvFile = function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(jsonData) {
-      var cashJSON, cashCsv, keys, columnDelimiter, lineDelimiter, csvColumnHeader, csvStr, shared;
+      var cashCsv, keys, columnDelimiter, lineDelimiter, csvColumnHeader, csvStr, shared;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -123,14 +123,13 @@ $(function () {
 
               // Call the getInstitutions API for cash balances and set the function response to variable cashCsv
               _context.next = 6;
-              return addon.api.getInstitutions(getQueryFromOptions(addonOptions));
+              return addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
+                parseInstitutionsToCsvFile(response);
+              }).catch(function (err) {
+                console.log(err);
+              });
 
             case 6:
-              cashJSON = _context.sent;
-              _context.next = 9;
-              return parseInstitutionsToCsvFile(cashJSON);
-
-            case 9:
               cashCsv = _context.sent;
 
 
@@ -172,21 +171,21 @@ $(function () {
 
                 return encodeURIComponent(csvStr);
               });
-              _context.next = 22;
+              _context.next = 19;
               break;
 
-            case 19:
-              _context.prev = 19;
+            case 16:
+              _context.prev = 16;
               _context.t0 = _context['catch'](0);
 
               console.log(_context.t0);
 
-            case 22:
+            case 19:
             case 'end':
               return _context.stop();
           }
         }
-      }, _callee, this, [[0, 19]]);
+      }, _callee, this, [[0, 16]]);
     }));
 
     return function parsePositionsToCsvFile(_x) {

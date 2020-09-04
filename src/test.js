@@ -150,8 +150,11 @@ $(function () {
           };
 
       // Call the getInstitutions API for cash balances and set the function response to variable cashCsv
-      var cashJSON = await addon.api.getInstitutions(getQueryFromOptions(addonOptions));
-      var cashCsv =  await parseInstitutionsToCsvFile(cashJSON);
+      let cashCsv = await addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response){
+        parseInstitutionsToCsvFile(response);
+      }).catch(function (err) {
+      console.log(err)
+      });
 
       // Create array of column headers
       let keys = [
