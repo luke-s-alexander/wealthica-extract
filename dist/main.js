@@ -268,19 +268,6 @@ $(function () {
     });
   });
 
-  $('#getCash').on('click', function () {
-    $(this).attr('disabled', 'disabled');
-
-    addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
-      $('#result').html('List Institutions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
-      exportCashCustomToCsvFile(response);
-    }).catch(function (err) {
-      $('#result').html('Error:<br><code>' + err + '</code>');
-    }).finally(function () {
-      $('#getCash').removeAttr('disabled');
-    });
-  });
-
   $('#getTransactions').on('click', function () {
     $(this).attr('disabled', 'disabled');
 
