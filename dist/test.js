@@ -124,7 +124,7 @@ $(function () {
               // Call the getInstitutions API for cash balances and set the function response to variable cashCsv
               _context.next = 6;
               return addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
-                parseInstitutionsToCsvFile(response);
+                return parseInstitutionsToCsvFile(response);
               }).catch(function (err) {
                 console.log(err);
               });
@@ -132,7 +132,7 @@ $(function () {
             case 6:
               cashCsv = _context.sent;
 
-
+              console.log(cashCsv);
               // Create array of column headers
               keys = ['category', 'class', 'symbol', 'alias', 'account', 'account_type', 'account_currency', 'quantity', 'book_value', 'market_value', 'gain_percent', 'gain_amount'];
               // Set formats
@@ -166,30 +166,66 @@ $(function () {
                   });
                   csvStr += lineDelimiter;
                 });
-
-                csvStr = csvStr.concat(cashCsv);
-
-                return encodeURIComponent(csvStr);
               });
-              _context.next = 19;
-              break;
+              csvStr = csvStr.concat(cashCsv);
+              //    console.log(encodeURIComponent(csvStr));
+              return _context.abrupt('return', encodeURIComponent(csvStr));
 
-            case 16:
-              _context.prev = 16;
+            case 19:
+              _context.prev = 19;
               _context.t0 = _context['catch'](0);
 
               console.log(_context.t0);
 
-            case 19:
+            case 22:
             case 'end':
               return _context.stop();
           }
         }
-      }, _callee, this, [[0, 16]]);
+      }, _callee, this, [[0, 19]]);
     }));
 
     return function parsePositionsToCsvFile(_x) {
       return _ref.apply(this, arguments);
+    };
+  }();
+
+  // Parse JSON object into CSV string
+  var exportPositionsToCsvFile = function () {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(jsonData) {
+      var csvStr, dataUri, today, date, time, exportFileDefaultName, linkElement;
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              _context2.next = 2;
+              return parsePositionsToCsvFile(jsonData);
+
+            case 2:
+              csvStr = _context2.sent;
+
+              console.log(csvStr);
+              dataUri = 'data:text/csv;charset=utf-8,' + csvStr;
+              today = new Date();
+              date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+              time = today.getHours().toString() + today.getMinutes() + today.getSeconds();
+              exportFileDefaultName = 'positions_' + date + time + '.csv';
+              linkElement = document.createElement('a');
+
+              linkElement.setAttribute('href', dataUri);
+              linkElement.setAttribute('download', exportFileDefaultName);
+              linkElement.click();
+
+            case 13:
+            case 'end':
+              return _context2.stop();
+          }
+        }
+      }, _callee2, this);
+    }));
+
+    return function exportPositionsToCsvFile(_x2) {
+      return _ref2.apply(this, arguments);
     };
   }();
 
@@ -346,16 +382,17 @@ $(function () {
     var lineDelimiter = '\n';
     // Build header
     var csvColumnHeader = keys.join(columnDelimiter);
-    var csvStr = csvColumnHeader + lineDelimiter;
+    // Don't set column headers (assume it's set by parent function)
+    var csvStr = "";
     var shared = [];
     // Loop through position results
     jsonData.forEach(function (item) {
       // Don't print any data at the position level, but capture shared data
-      shared = ['Cash', null, 'Cash', null];
+      shared = ['Cash', 'cash', 'Cash', null];
       // Loop through investments for each position
       item.investments.forEach(function (element) {
 
-        var investment_data = [element.id, element.type, element.currency, null, null, element.cash, null, null];
+        var investment_data = [element.id, element.type, element.currency, null, element.cash, element.cash, null, null];
         // Add investment data to shared position data
         investment_data = shared.concat(investment_data);
         // Loop through investment data and create csv row
@@ -370,7 +407,7 @@ $(function () {
         };
       });
     });
-    return encodeURIComponent(csvStr);
+    return csvStr;
   };
 
   // Parse Transactions JSON object into CSV string
@@ -428,23 +465,7 @@ $(function () {
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
     linkElement.click();
-  };
-
-  // Parse JSON object into CSV string
-  function exportPositionsToCsvFile(jsonData) {
-    var csvStr = parsePositionsToCsvFile(jsonData);
-    var dataUri = 'data:text/csv;charset=utf-8,' + csvStr;
-    var today = new Date();
-    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-    var time = today.getHours().toString() + today.getMinutes() + today.getSeconds();
-
-    var exportFileDefaultName = 'positions_' + date + time + '.csv';
-
-    var linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
-  };
+  };;
 
   // Parse Institutions JSON object into CSV string
   function exportInstitutionsToCsvFile(jsonData) {
