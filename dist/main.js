@@ -94,9 +94,139 @@ var main =
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 var addon, addonOptions;
 
 $(function () {
+
+  // Parse Assets (Institutions response) JSON object into CSV string
+  var parseAssetsCustomToCsvFile = function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(jsonData) {
+      var cashCsv, keys, columnDelimiter, lineDelimiter, csvColumnHeader, csvStr, shared;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.prev = 0;
+
+              if (!(jsonData.length == 0)) {
+                _context.next = 3;
+                break;
+              }
+
+              return _context.abrupt('return', '');
+
+            case 3:
+              ;
+
+              // Call the getInstitutions API for cash balances and set the function response to variable cashCsv
+              _context.next = 6;
+              return addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
+                return parseCashCustomToCsvFile(response);
+              }).catch(function (err) {
+                console.log(err);
+              });
+
+            case 6:
+              cashCsv = _context.sent;
+
+              console.log(cashCsv);
+              // Create array of column headers
+              keys = ['category', 'class', 'symbol', 'alias', 'account', 'account_type', 'account_currency', 'quantity', 'book_value', 'market_value', 'gain_percent', 'gain_amount'];
+              // Set formats
+
+              columnDelimiter = ',';
+              lineDelimiter = '\n';
+              // Build header
+
+              csvColumnHeader = keys.join(columnDelimiter);
+              csvStr = csvColumnHeader + lineDelimiter;
+              shared = [];
+              // Loop through position results
+
+              jsonData.forEach(function (item) {
+                // Don't print any data at the position level, but capture shared data
+                shared = [item.category, item.class, item.security.symbol, item.security.aliases[0]];
+                // Loop through investments for each position
+                item.investments.forEach(function (element) {
+                  var investment = element.investment;
+                  var parsedInvestment = investment.split(":");
+
+                  var investment_data = [parsedInvestment, element.quantity, element.book_value, element.market_value, element.gain_percent, element.gain_amount];
+                  // Add investment data to shared position data
+                  investment_data = shared.concat(investment_data);
+                  // Loop through investment data and create csv row
+                  investment_data.forEach(function (entry, index) {
+                    if (index > 0 && index < investment_data.length) {
+                      csvStr += columnDelimiter;
+                    }
+                    csvStr += entry;
+                  });
+                  csvStr += lineDelimiter;
+                });
+              });
+              csvStr = csvStr.concat(cashCsv);
+              return _context.abrupt('return', encodeURIComponent(csvStr));
+
+            case 19:
+              _context.prev = 19;
+              _context.t0 = _context['catch'](0);
+
+              console.log(_context.t0);
+
+            case 22:
+            case 'end':
+              return _context.stop();
+          }
+        }
+      }, _callee, this, [[0, 19]]);
+    }));
+
+    return function parseAssetsCustomToCsvFile(_x) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  // Parse JSON object into CSV string
+  var exportAssetsCustomToCsvFile = function () {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(jsonData) {
+      var csvStr, dataUri, today, date, time, exportFileDefaultName, linkElement;
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              _context2.next = 2;
+              return parseAssetsCustomToCsvFile(jsonData);
+
+            case 2:
+              csvStr = _context2.sent;
+
+              console.log(csvStr);
+              dataUri = 'data:text/csv;charset=utf-8,' + csvStr;
+              today = new Date();
+              date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+              time = today.getHours().toString() + today.getMinutes() + today.getSeconds();
+              exportFileDefaultName = 'positions_' + date + time + '.csv';
+              linkElement = document.createElement('a');
+
+              linkElement.setAttribute('href', dataUri);
+              linkElement.setAttribute('download', exportFileDefaultName);
+              linkElement.click();
+
+            case 13:
+            case 'end':
+              return _context2.stop();
+          }
+        }
+      }, _callee2, this);
+    }));
+
+    return function exportAssetsCustomToCsvFile(_x2) {
+      return _ref2.apply(this, arguments);
+    };
+  }();
+
   addon = new Addon();
 
   addon.on('init', function (options) {
@@ -122,6 +252,32 @@ $(function () {
       $('#result').html('Error:<br><code>' + err + '</code>');
     }).finally(function () {
       $('#addTransaction').removeAttr('disabled');
+    });
+  });
+
+  $('#getAssetsCustom').on('click', function () {
+    $(this).attr('disabled', 'disabled');
+
+    addon.api.getPositions(getQueryFromOptions(addonOptions)).then(function (response) {
+      $('#result').html('List Positions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
+      exportAssetsCustomToCsvFile(response);
+    }).catch(function (err) {
+      $('#result').html('Error:<br><code>' + err + '</code>');
+    }).finally(function () {
+      $('#getAssetsCustom').removeAttr('disabled');
+    });
+  });
+
+  $('#getCash').on('click', function () {
+    $(this).attr('disabled', 'disabled');
+
+    addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
+      $('#result').html('List Institutions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
+      exportCashCustomToCsvFile(response);
+    }).catch(function (err) {
+      $('#result').html('Error:<br><code>' + err + '</code>');
+    }).finally(function () {
+      $('#getCash').removeAttr('disabled');
     });
   });
 
@@ -176,21 +332,6 @@ $(function () {
     });
   });
 
-  // $('#getInstitutionAssets').on('click', function () {
-  //   $(this).attr('disabled', 'disabled');
-
-  //   addon.request({
-  //     method: 'GET',
-  //     endpoint: 'assets'
-  //   }).then(function (response) {
-  //     $('#result').html('List Assets Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
-  //   }).catch(function (err) {
-  //      $('#result').html('Error:<br><code>' + err + '</code>'); 
-  //   }).finally(function () {
-  //     $('#getInstitutionAssets').removeAttr('disabled');
-  //   });
-  // });
-
   $('#saveData').on('click', function () {
     $(this).attr('disabled', 'disabled');
     var newData = $('#data').val();
@@ -237,6 +378,45 @@ $(function () {
       investments: options.investmentsFilter === 'all' ? null : options.investmentsFilter
     };
   }
+  // Parse Cash into CSV string
+  function parseCashCustomToCsvFile(jsonData) {
+    if (jsonData.length == 0) {
+      return '';
+    }
+    // Create array of column headers
+    var keys = ['category', 'class', 'symbol', 'alias', 'account', 'account_type', 'account_currency', 'quantity', 'book_value', 'market_value', 'gain_percent', 'gain_amount'];
+    // Set formats
+    var columnDelimiter = ',';
+    var lineDelimiter = '\n';
+    // Build header
+    var csvColumnHeader = keys.join(columnDelimiter);
+    // Don't set column headers (assume it's set by parent function)
+    var csvStr = "";
+    var shared = [];
+    // Loop through position results
+    jsonData.forEach(function (item) {
+      // Don't print any data at the position level, but capture shared data
+      shared = ['Cash', 'cash', 'Cash', null];
+      // Loop through investments for each position
+      item.investments.forEach(function (element) {
+
+        var investment_data = [element.id, element.type, element.currency, null, element.cash, element.cash, null, null];
+        // Add investment data to shared position data
+        investment_data = shared.concat(investment_data);
+        // Loop through investment data and create csv row
+        if (investment_data[9] != 0) {
+          investment_data.forEach(function (entry, index) {
+            if (index > 0 && index < investment_data.length) {
+              csvStr += columnDelimiter;
+            }
+            csvStr += entry;
+          });
+          csvStr += lineDelimiter;
+        };
+      });
+    });
+    return csvStr;
+  };;
 
   // Parse Positions JSON object into CSV string
   function parsePositionsToCsvFile(jsonData) {
@@ -387,7 +567,21 @@ $(function () {
     });
     return encodeURIComponent(csvStr);
   };
+  // Parse Institutions JSON object into CSV string
+  function exportCashCustomToCsvFile(jsonData) {
+    var csvStr = parseCashCustomToCsvFile(jsonData);
+    var dataUri = 'data:text/csv;charset=utf-8,' + csvStr;
+    var today = new Date();
+    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    var time = today.getHours().toString() + today.getMinutes() + today.getSeconds();
 
+    var exportFileDefaultName = 'cash_' + date + time + '.csv';
+
+    var linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };;
   // Parse JSON object into CSV string
   function exportTransactionsToCsvFile(jsonData) {
     var csvStr = parseTransactionsToCsvFile(jsonData);
