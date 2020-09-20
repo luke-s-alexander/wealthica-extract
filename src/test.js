@@ -29,6 +29,19 @@ $(function () {
     });
   });
 
+  $('#getAssetsCustom').on('click', function () {
+    $(this).attr('disabled', 'disabled');
+
+    addon.api.getPositions(getQueryFromOptions(addonOptions)).then(function (response) {
+      $('#result').html('List Positions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
+      exportAssetsCustomToCsvFile(response);
+    }).catch(function (err) {
+      $('#result').html('Error:<br><code>' + err + '</code>');
+    }).finally(function () {
+      $('#getAssetsCustom').removeAttr('disabled');
+    });
+  });
+
   $('#getTransactions').on('click', function () {
     $(this).attr('disabled', 'disabled');
 
@@ -80,20 +93,7 @@ $(function () {
     });
   });
 
-  // $('#getInstitutionAssets').on('click', function () {
-  //   $(this).attr('disabled', 'disabled');
-    
-  //   addon.request({
-  //     method: 'GET',
-  //     endpoint: 'assets'
-  //   }).then(function (response) {
-  //     $('#result').html('List Assets Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
-  //   }).catch(function (err) {
-  //      $('#result').html('Error:<br><code>' + err + '</code>'); 
-  //   }).finally(function () {
-  //     $('#getInstitutionAssets').removeAttr('disabled');
-  //   });
-  // });
+
 
   $('#saveData').on('click', function () {
     $(this).attr('disabled', 'disabled');
@@ -140,88 +140,8 @@ $(function () {
       investments: options.investmentsFilter === 'all' ? null: options.investmentsFilter,
     }
   }
-
-  // Parse Positions JSON object into CSV string
-  async function parsePositionsToCsvFile(jsonData) {
-    try {
-      // Check that data is returned
-      if(jsonData.length == 0) {
-            return '';
-          };
-
-      // Call the getInstitutions API for cash balances and set the function response to variable cashCsv
-      let cashCsv = await addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response){
-       return parseInstitutionsToCsvFile(response);
-      }).catch(function (err) {
-      console.log(err)
-      });
-      console.log(cashCsv);
-      // Create array of column headers
-      let keys = [
-          'category', 
-          'class', 
-          'symbol', 
-          'alias', 
-          'account',
-          'account_type',
-          'account_currency', 
-          'quantity', 
-          'book_value', 
-          'market_value', 
-          'gain_percent', 
-          'gain_amount'
-      ];
-      // Set formats
-      let columnDelimiter = ',';
-      let lineDelimiter = '\n';
-      // Build header
-      let csvColumnHeader = keys.join(columnDelimiter);
-      let csvStr = csvColumnHeader + lineDelimiter;
-      var shared = []
-      // Loop through position results
-      jsonData.forEach(item => {
-        // Don't print any data at the position level, but capture shared data
-        shared = [ 
-            item.category, 
-            item.class, 
-            item.security.symbol, 
-            item.security.aliases[0] 
-        ];
-        // Loop through investments for each position
-        item.investments.forEach(element => {
-          var investment = element.investment;
-          var parsedInvestment = investment.split(":");
-
-          var investment_data = [
-              parsedInvestment, 
-              element.quantity, 
-              element.book_value, 
-              element.market_value, 
-              element.gain_percent, 
-              element.gain_amount
-          ];
-          // Add investment data to shared position data
-          investment_data = shared.concat(investment_data);
-          // Loop through investment data and create csv row
-          investment_data.forEach((entry, index) => {
-              if( (index > 0) && (index < investment_data.length) ) {
-                  csvStr += columnDelimiter;
-              }
-              csvStr += entry;
-          }); 
-          csvStr += lineDelimiter
-        });
-      });
-      csvStr = csvStr.concat(cashCsv);
-  //    console.log(encodeURIComponent(csvStr));
-      return encodeURIComponent(csvStr);
-    } catch (error) { 
-      console.log(error)
-    }
-  };
-
-// Parse Institutions Cash into CSV string
-  function parseInstitutionsToCsvFile(jsonData) {
+  // Parse Cash into CSV string
+  function parseCashCustomToCsvFile(jsonData) {
     if(jsonData.length == 0) {
       return '';
     }
@@ -287,6 +207,245 @@ $(function () {
    return csvStr;
   };
 
+  // Parse Assets (Institutions response) JSON object into CSV string
+  async function parseAssetsCustomToCsvFile(jsonData) {
+    try {
+      // Check that data is returned
+      if(jsonData.length == 0) {
+            return '';
+          };
+
+      // Call the getInstitutions API for cash balances and set the function response to variable cashCsv
+      let cashCsv = await addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response){
+       return parseCashCustomToCsvFile(response);
+      }).catch(function (err) {
+      console.log(err)
+      });
+      console.log(cashCsv);
+      // Create array of column headers
+      let keys = [
+          'category', 
+          'class', 
+          'symbol', 
+          'alias', 
+          'account',
+          'account_type',
+          'account_currency', 
+          'quantity', 
+          'book_value', 
+          'market_value', 
+          'gain_percent', 
+          'gain_amount'
+      ];
+      // Set formats
+      let columnDelimiter = ',';
+      let lineDelimiter = '\n';
+      // Build header
+      let csvColumnHeader = keys.join(columnDelimiter);
+      let csvStr = csvColumnHeader + lineDelimiter;
+      var shared = []
+      // Loop through position results
+      jsonData.forEach(item => {
+        // Don't print any data at the position level, but capture shared data
+        shared = [ 
+            item.category, 
+            item.class, 
+            item.security.symbol, 
+            item.security.aliases[0] 
+        ];
+        // Loop through investments for each position
+        item.investments.forEach(element => {
+          var investment = element.investment;
+          var parsedInvestment = investment.split(":");
+
+          var investment_data = [
+              parsedInvestment, 
+              element.quantity, 
+              element.book_value, 
+              element.market_value, 
+              element.gain_percent, 
+              element.gain_amount
+          ];
+          // Add investment data to shared position data
+          investment_data = shared.concat(investment_data);
+          // Loop through investment data and create csv row
+          investment_data.forEach((entry, index) => {
+              if( (index > 0) && (index < investment_data.length) ) {
+                  csvStr += columnDelimiter;
+              }
+              csvStr += entry;
+          }); 
+          csvStr += lineDelimiter
+        });
+      });
+      csvStr = csvStr.concat(cashCsv);
+      return encodeURIComponent(csvStr);
+    } catch (error) { 
+      console.log(error)
+    }
+  };
+
+  // Parse Positions JSON object into CSV string
+  function parsePositionsToCsvFile(jsonData) {
+    if(jsonData.length == 0) {
+      return '';
+    }
+    // Create array of column headers
+    let keys = [
+        'category', 
+        'class', 
+        'symbol', 
+        'alias', 
+        'account',
+        'account_type',
+        'account_currency', 
+        'quantity', 
+        'book_value', 
+        'market_value', 
+        'gain_percent', 
+        'gain_amount'
+    ];
+    // Set formats
+    let columnDelimiter = ',';
+    let lineDelimiter = '\n';
+    // Build header
+    let csvColumnHeader = keys.join(columnDelimiter);
+    let csvStr = csvColumnHeader + lineDelimiter;
+    var shared = []
+    // Loop through position results
+    jsonData.forEach(item => {
+      // Don't print any data at the position level, but capture shared data
+      shared = [ 
+          item.category, 
+          item.class, 
+          item.security.symbol, 
+          item.security.aliases[0] 
+      ];
+      // Loop through investments for each position
+      item.investments.forEach(element => {
+        var investment = element.investment;
+        var parsedInvestment = investment.split(":");
+
+        var investment_data = [
+            parsedInvestment, 
+            element.quantity, 
+            element.book_value, 
+            element.market_value, 
+            element.gain_percent, 
+            element.gain_amount
+        ];
+        // Add investment data to shared position data
+        investment_data = shared.concat(investment_data);
+        // Loop through investment data and create csv row
+        investment_data.forEach((entry, index) => {
+            if( (index > 0) && (index < investment_data.length) ) {
+                csvStr += columnDelimiter;
+            }
+            csvStr += entry;
+        });
+        csvStr += lineDelimiter
+      });
+    });
+    // Add cash balances
+
+	    // Copied directly from the getInstitutions button above, for reference:
+		    // addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
+		    //   $('#result').html('List Institutions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
+		    //   exportInstitutionsToCsvFile(response);
+		    // }).catch(function (err) {
+		    //    $('#result').html('Error:<br><code>' + err + '</code>'); 
+		    // }).finally(function () {
+		    //   $('#getInstitutions').removeAttr('disabled');
+		    // });
+
+	// Actual function for case balances:
+	// Call the getInstitutions API for cash balances and set the function response to variable cashCsv
+    var cashCsv = addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
+    	// call the parse Institutions fn to get csv string back (not file):
+      var csv = parseInstitutionsToCsvFile(response);
+      // function returns the new csv file from parse Institutions
+      // Check that csv is correct - Confirmed
+      // console.log(csv);
+      return csv;
+    }).catch(function (err) {
+    	// catch errors in console
+    	console.log(err);
+    });
+
+    console.log(JSON.stringify(cashCsv));
+    // var cashCsv = parseInstitutionsToCsvFile(cashJSON);
+    // Add Institutions (cash) csv to the positions csv:
+    csvStr = csvStr.concat(cashCsv);
+   // return encodeURIComponent(csvStr.concat(cashCsv));
+   return encodeURIComponent(csvStr);
+  };
+
+// Parse Institutions Cash into CSV string
+  function parseInstitutionsToCsvFile(jsonData) {
+    if(jsonData.length == 0) {
+      return '';
+    }
+    // Create array of column headers
+    let keys = [
+        'category', 
+        'class', 
+        'symbol', 
+        'alias', 
+        'account',
+        'account_type',
+        'account_currency', 
+        'quantity', 
+        'book_value', 
+        'market_value', 
+        'gain_percent', 
+        'gain_amount'
+    ];
+    // Set formats
+    let columnDelimiter = ',';
+    let lineDelimiter = '\n';
+    // Build header
+    let csvColumnHeader = keys.join(columnDelimiter);
+    let csvStr = csvColumnHeader + lineDelimiter;
+    var shared = []
+    // Loop through position results
+    jsonData.forEach(item => {
+      // Don't print any data at the position level, but capture shared data
+      shared = [ 
+          'Cash', 
+          null, 
+         'Cash', 
+          null 
+      ];
+      // Loop through investments for each position
+      item.investments.forEach(element => {
+
+        var investment_data = [
+            element.id,
+            element.type,
+            element.currency, 
+            null, 
+            null, 
+            element.cash, 
+            null, 
+            null
+        ];
+        // Add investment data to shared position data
+        investment_data = shared.concat(investment_data);
+        // Loop through investment data and create csv row
+        if( (investment_data[9] != 0) ) {
+          investment_data.forEach((entry, index) => {
+              if( (index > 0) && (index < investment_data.length) ) {
+                  csvStr += columnDelimiter;
+              }
+              csvStr += entry;
+          });
+          csvStr += lineDelimiter
+        };
+      });
+    });
+   return encodeURIComponent(csvStr);
+  };
+
 
 
 // Parse Transactions JSON object into CSV string
@@ -350,9 +509,39 @@ $(function () {
     });
    return encodeURIComponent(csvStr);
   };
+  // Parse Institutions JSON object into CSV string
+  function exportCashCustomToCsvFile(jsonData) {
+      let csvStr = parseCashCustomToCsvFile(jsonData);
+      let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
+      var today = new Date();
+      var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+      var time = today.getHours().toString() + today.getMinutes() + today.getSeconds();
 
+      let exportFileDefaultName = 'cash_' + date + time + '.csv';
+
+      let linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+  };
   // Parse JSON object into CSV string
- function exportTransactionsToCsvFile(jsonData) {
+  async function exportAssetsCustomToCsvFile(jsonData) {
+      let csvStr = await parseAssetsCustomToCsvFile(jsonData);
+      console.log(csvStr);
+      let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
+      var today = new Date();
+      var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+      var time = today.getHours().toString() + today.getMinutes() + today.getSeconds();
+
+      let exportFileDefaultName = 'positions_' + date + time + '.csv';
+
+      let linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+  };  
+  // Parse JSON object into CSV string
+  function exportTransactionsToCsvFile(jsonData) {
       let csvStr = parseTransactionsToCsvFile(jsonData);
       let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
       var today = new Date();
@@ -368,9 +557,8 @@ $(function () {
   };
 
   // Parse JSON object into CSV string
-  async function exportPositionsToCsvFile(jsonData) {
-      let csvStr = await parsePositionsToCsvFile(jsonData);
-      console.log(csvStr);
+  function exportPositionsToCsvFile(jsonData) {
+      let csvStr = parsePositionsToCsvFile(jsonData);
       let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
       var today = new Date();
       var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
