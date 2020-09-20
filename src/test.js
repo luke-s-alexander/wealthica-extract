@@ -259,7 +259,8 @@ $(function () {
           var parsedInvestment = investment.split(":");
 
           var investment_data = [
-              // parsedInvestment[0], -- Removed (currency portion) to simplify export file   
+              parsedInvestment[0], // -- Removed (currency portion) to simplify export file
+              parsedInvestment[1], // -- Removed (currency portion) to simplify export file
               // element.quantity,    -- Removed to simplify export file
               // element.book_value,  -- Removed to simplify export file
               element.market_value
