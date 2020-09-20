@@ -153,12 +153,12 @@ $(function () {
         'alias', 
         'account',
         'account_type',
-        'account_currency', 
-        'quantity', 
-        'book_value', 
+        // 'account_currency', -- Removed to simplify export file
+        // 'quantity',         -- Removed to simplify export file
+        // 'book_value',       -- Removed to simplify export file
         'market_value', 
-        'gain_percent', 
-        'gain_amount'
+        // 'gain_percent',     -- Removed to simplify export file
+        // 'gain_amount'       -- Removed to simplify export file
     ];
     // Set formats
     let columnDelimiter = ',';
@@ -183,12 +183,12 @@ $(function () {
         var investment_data = [
             element.id,
             element.type,
-            element.currency, 
-            null, 
+            // element.currency, -- Removed to simplify export file
+            // null,             -- Removed to simplify export file 
+            // element.cash,     -- Removed to simplify export file
             element.cash, 
-            element.cash, 
-            null, 
-            null
+            // null,             -- Removed to simplify export file
+            // null              -- Removed to simplify export file 
         ];
         // Add investment data to shared position data
         investment_data = shared.concat(investment_data);
@@ -230,12 +230,12 @@ $(function () {
           'alias', 
           'account',
           'account_type',
-          'account_currency', 
-          'quantity', 
-          'book_value', 
-          'market_value', 
-          'gain_percent', 
-          'gain_amount'
+          //'account_currency', -- Removed to simplify export file
+          //'quantity',         -- Removed to simplify export file
+          //'book_value',       -- Removed to simplify export file
+          'market_value'
+          //,'gain_percent',    -- Removed to simplify export file
+          //'gain_amount'       -- Removed to simplify export file
       ];
       // Set formats
       let columnDelimiter = ',';
@@ -259,12 +259,14 @@ $(function () {
           var parsedInvestment = investment.split(":");
 
           var investment_data = [
-              parsedInvestment, 
-              element.quantity, 
-              element.book_value, 
-              element.market_value, 
-              element.gain_percent, 
-              element.gain_amount
+              parsedInvestment[0], // -- Removed (currency portion) to simplify export file
+              parsedInvestment[1], // -- Removed (currency portion) to simplify export file
+              // element.quantity,    -- Removed to simplify export file
+              // element.book_value,  -- Removed to simplify export file
+              element.market_value
+              // , 
+              // element.gain_percent,-- Removed to simplify export file
+              // element.gain_amount  -- Removed to simplify export file
           ];
           // Add investment data to shared position data
           investment_data = shared.concat(investment_data);
