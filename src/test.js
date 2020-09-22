@@ -153,7 +153,7 @@ $(function () {
         'alias', 
         'account',
         'account_type',
-        // 'account_currency', -- Removed to simplify export file
+        'account_currency',
         // 'quantity',         -- Removed to simplify export file
         // 'book_value',       -- Removed to simplify export file
         'market_value', 
@@ -183,7 +183,7 @@ $(function () {
         var investment_data = [
             element.id,
             element.type,
-            // element.currency, -- Removed to simplify export file
+            element.currency,
             // null,             -- Removed to simplify export file 
             // element.cash,     -- Removed to simplify export file
             element.cash, 
@@ -230,7 +230,7 @@ $(function () {
           'alias', 
           'account',
           'account_type',
-          //'account_currency', -- Removed to simplify export file
+          'account_currency',
           //'quantity',         -- Removed to simplify export file
           //'book_value',       -- Removed to simplify export file
           'market_value'
@@ -259,7 +259,7 @@ $(function () {
           var parsedInvestment = investment.split(":");
 
           var investment_data = [
-              parsedInvestment[0], // -- Removed (currency portion) to simplify export file
+              // parsedInvestment[0], -- Removed (type portion) to simplify export file
               parsedInvestment[1], // -- Removed (currency portion) to simplify export file
               // element.quantity,    -- Removed to simplify export file
               // element.book_value,  -- Removed to simplify export file
