@@ -405,9 +405,9 @@ $(function () {
     jsonData.forEach(function (item) {
       // Don't print any data at the position level, but capture shared data
       shared = ['Cash', 'cash', 'Cash', null];
-      if (item.cash) {
-        // Loop through investments for each position
-        item.investments.forEach(function (element) {
+      // Loop through investments for each position
+      item.investments.forEach(function (element) {
+        if (element.cash) {
           var investment_data = [element.id, element.type, element.currency,
           // null,             -- Removed to simplify export file 
           // element.cash,     -- Removed to simplify export file
@@ -424,8 +424,8 @@ $(function () {
             });
             csvStr += lineDelimiter;
           };
-        });
-      };
+        };
+      });
     });
     return csvStr;
   };;
@@ -451,7 +451,7 @@ $(function () {
       // Loop through investments for each position
       item.investments.forEach(function (element) {
         // Only export cash positions that are non zero
-        if (element.cash) {
+        if (element.market_value) {
           var investment = element.investment;
           // split field investment into account, account_type and account_currency
           var parsedInvestment = investment.split(":");

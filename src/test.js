@@ -178,33 +178,33 @@ $(function () {
           'Cash', 
            null 
       ];
-      if(item.cash){
       	// Loop through investments for each position
       	item.investments.forEach(element => {
-          var investment_data = [
-            element.id,
-            element.type,
-            element.currency,
-            // null,             -- Removed to simplify export file 
-            // element.cash,     -- Removed to simplify export file
-            element.cash, 
-            // null,             -- Removed to simplify export file
-            // null              -- Removed to simplify export file 
-          ];
-          // Add investment data to shared position data
-          investment_data = shared.concat(investment_data);
-          // Loop through investment data and create csv row
-          if( (investment_data[9] != 0) ) {
-            investment_data.forEach((entry, index) => {
-              if( (index > 0) && (index < investment_data.length) ) {
-                csvStr += columnDelimiter;
-              };
+      	  if(element.cash) {	
+          	var investment_data = [
+              element.id,
+              element.type,
+              element.currency,
+              // null,             -- Removed to simplify export file 
+              // element.cash,     -- Removed to simplify export file
+              element.cash, 
+              // null,             -- Removed to simplify export file
+              // null              -- Removed to simplify export file 
+         	];
+          	// Add investment data to shared position data
+          	investment_data = shared.concat(investment_data);
+          	// Loop through investment data and create csv row
+          	if( (investment_data[9] != 0) ) {
+              investment_data.forEach((entry, index) => {
+               	if( (index > 0) && (index < investment_data.length) ) {
+                  csvStr += columnDelimiter;
+              	};
               csvStr += entry;
-            });
+              });
             csvStr += lineDelimiter
+          	};
           };
         });
-  	  };
     });
     return csvStr;
   };
@@ -332,7 +332,7 @@ $(function () {
       // Loop through investments for each position
       item.investments.forEach(element => {
       	// Only export cash positions that are non zero
-      	if (element.cash) {
+      	if (element.market_value) {
           var investment = element.investment;
           // split field investment into account, account_type and account_currency
           var parsedInvestment = investment.split(":");
