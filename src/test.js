@@ -223,7 +223,6 @@ $(function () {
       }).catch(function (err) {
       console.log(err)
       });
-      console.log(cashCsv);
       // Create array of column headers
       let keys = [
           'category', 
@@ -332,58 +331,40 @@ $(function () {
       ];
       // Loop through investments for each position
       item.investments.forEach(element => {
-        var investment = element.investment;
-        // split field investment into account, account_type and account_currency
-        var parsedInvestment = investment.split(":");
+      	// Only export cash positions that are non zero
+      	if (element.cash) {
+          var investment = element.investment;
+          // split field investment into account, account_type and account_currency
+          var parsedInvestment = investment.split(":");
 
-        var investment_data = [
-            parsedInvestment, 
+          var investment_data = [
+          	parsedInvestment, 
             element.quantity, 
             element.book_value, 
             element.market_value, 
             element.gain_percent, 
             element.gain_amount
-        ];
-        // Add investment data to shared position data
-        investment_data = shared.concat(investment_data);
-        // Loop through investment data and create csv row
-        investment_data.forEach((entry, index) => {
+          ];
+          // Add investment data to shared position data
+          investment_data = shared.concat(investment_data);
+          // Loop through investment data and create csv row
+          investment_data.forEach((entry, index) => {
             if( (index > 0) && (index < investment_data.length) ) {
                 csvStr += columnDelimiter;
-            }
+            };
             csvStr += entry;
-        });
-        csvStr += lineDelimiter
+          });
+          csvStr += lineDelimiter
+        };
       });
     });
-    // Add cash balances
-
-	    // Copied directly from the getInstitutions button above, for reference:
-		    // addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
-		    //   $('#result').html('List Institutions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
-		    //   exportInstitutionsToCsvFile(response);
-		    // }).catch(function (err) {
-		    //    $('#result').html('Error:<br><code>' + err + '</code>'); 
-		    // }).finally(function () {
-		    //   $('#getInstitutions').removeAttr('disabled');
-		    // });
-
-	// Actual function for case balances:
-	// Call the getInstitutions API for cash balances and set the function response to variable cashCsv
     var cashCsv = addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
-    	// call the parse Institutions fn to get csv string back (not file):
       var csv = parseInstitutionsToCsvFile(response);
-      // function returns the new csv file from parse Institutions
-      // Check that csv is correct - Confirmed
-      // console.log(csv);
       return csv;
     }).catch(function (err) {
     	// catch errors in console
     	console.log(err);
     });
-
-    console.log(JSON.stringify(cashCsv));
-    // var cashCsv = parseInstitutionsToCsvFile(cashJSON);
     // Add Institutions (cash) csv to the positions csv:
     csvStr = csvStr.concat(cashCsv);
    // return encodeURIComponent(csvStr.concat(cashCsv));
@@ -455,8 +436,6 @@ $(function () {
     });
    return encodeURIComponent(csvStr);
   };
-
-
 
 // Parse Transactions JSON object into CSV string
   function parseTransactionsToCsvFile(jsonData) {
@@ -538,7 +517,6 @@ $(function () {
   // Parse JSON object into CSV string
   async function exportAssetsCustomToCsvFile(jsonData) {
       let csvStr = await parseAssetsCustomToCsvFile(jsonData);
-      console.log(csvStr);
       let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
       var today = new Date();
       var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
