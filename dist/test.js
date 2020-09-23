@@ -158,28 +158,32 @@ $(function () {
                 // Loop through investments for each position
                 item.investments.forEach(function (element) {
                   var investment = element.investment;
-                  var parsedInvestment = investment.split(":");
 
-                  var investment_data = [parsedInvestment,
-                  // parsedInvestment[0], // -- Removed (type portion) to simplify export file
-                  //parsedInvestment[1],    -- Removed (currency portion) to simplify export file
-                  // element.quantity,    -- Removed to simplify export file
-                  // element.book_value,  -- Removed to simplify export file
-                  element.market_value
-                  // , 
-                  // element.gain_percent,-- Removed to simplify export file
-                  // element.gain_amount  -- Removed to simplify export file
-                  ];
-                  // Add investment data to shared position data
-                  investment_data = shared.concat(investment_data);
-                  // Loop through investment data and create csv row
-                  investment_data.forEach(function (entry, index) {
-                    if (index > 0 && index < investment_data.length) {
-                      csvStr += columnDelimiter;
-                    }
-                    csvStr += entry;
-                  });
-                  csvStr += lineDelimiter;
+                  // Only capture row data if market_value is not zero
+                  if (element.market_value) {
+                    // split field investment into account, account_type and account_currency
+                    var parsedInvestment = investment.split(":");
+                    var investment_data = [parsedInvestment,
+                    // parsedInvestment[0], // -- Removed (type portion) to simplify export file
+                    // parsedInvestment[1],    -- Removed (currency portion) to simplify export file
+                    // element.quantity,    -- Removed to simplify export file
+                    // element.book_value,  -- Removed to simplify export file
+                    element.market_value
+                    // , 
+                    // element.gain_percent,-- Removed to simplify export file
+                    // element.gain_amount  -- Removed to simplify export file
+                    ];
+                    // Add investment data to shared position data
+                    investment_data = shared.concat(investment_data);
+                    // Loop through investment data and create csv row      	  
+                    investment_data.forEach(function (entry, index) {
+                      if (index > 0 && index < investment_data.length) {
+                        csvStr += columnDelimiter;
+                      };
+                      csvStr += entry;
+                    });
+                    csvStr += lineDelimiter;
+                  };
                 });
               });
               csvStr = csvStr.concat(cashCsv);
@@ -399,30 +403,32 @@ $(function () {
     // Don't set column headers (assume it's set by parent function)
     var csvStr = "";
     var shared = [];
+
     // Loop through position results
     jsonData.forEach(function (item) {
       // Don't print any data at the position level, but capture shared data
       shared = ['Cash', 'cash', 'Cash', null];
-      // Loop through investments for each position
-      item.investments.forEach(function (element) {
-
-        var investment_data = [element.id, element.type, element.currency,
-        // null,             -- Removed to simplify export file 
-        // element.cash,     -- Removed to simplify export file
-        element.cash];
-        // Add investment data to shared position data
-        investment_data = shared.concat(investment_data);
-        // Loop through investment data and create csv row
-        if (investment_data[9] != 0) {
-          investment_data.forEach(function (entry, index) {
-            if (index > 0 && index < investment_data.length) {
-              csvStr += columnDelimiter;
-            }
-            csvStr += entry;
-          });
-          csvStr += lineDelimiter;
-        };
-      });
+      if (item.cash) {
+        // Loop through investments for each position
+        item.investments.forEach(function (element) {
+          var investment_data = [element.id, element.type, element.currency,
+          // null,             -- Removed to simplify export file 
+          // element.cash,     -- Removed to simplify export file
+          element.cash];
+          // Add investment data to shared position data
+          investment_data = shared.concat(investment_data);
+          // Loop through investment data and create csv row
+          if (investment_data[9] != 0) {
+            investment_data.forEach(function (entry, index) {
+              if (index > 0 && index < investment_data.length) {
+                csvStr += columnDelimiter;
+              };
+              csvStr += entry;
+            });
+            csvStr += lineDelimiter;
+          };
+        });
+      };
     });
     return csvStr;
   };;
@@ -448,6 +454,7 @@ $(function () {
       // Loop through investments for each position
       item.investments.forEach(function (element) {
         var investment = element.investment;
+        // split field investment into account, account_type and account_currency
         var parsedInvestment = investment.split(":");
 
         var investment_data = [parsedInvestment, element.quantity, element.book_value, element.market_value, element.gain_percent, element.gain_amount];
@@ -554,6 +561,7 @@ $(function () {
     jsonData.forEach(function (item) {
       // Create row from transaction data
       var investment = item.investment;
+      // split field investment into account, account_type and account_currency
       var parsedInvestment = investment.split(":");
 
       row = [parsedInvestment, item.type, item.date, item.quantity, item.currency_amount, item.fee];
