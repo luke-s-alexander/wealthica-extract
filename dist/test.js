@@ -398,13 +398,19 @@ $(function () {
     // Don't set column headers (assume it's set by parent function)
     var csvStr = "";
     var shared = [];
-    var parsedInstitutions = getQueryFromOptions(addonOptions).institutions.split(",");
+    // Capture institutions from filters to be used when generating rows
+    var addonOptionsInstitutions = getQueryFromOptions(addonOptions).institutions;
+    // Create array for institutions from filters
+    var parsedInstitutions = [];
+    // If filters are applied, create array of institutions
+    if (addonOptionsInstitutions) {
+      var parsedInstitutions = addonOptionsInstitutions.split(",");
+    };
     // Loop through position results
     jsonData.forEach(function (item) {
       // Only capture information for rows where institutions are in filter
-      // (getQueryFromOptions doesn't work when calling getInstitutions in parseAssestsCustom)
-      if (parsedInstitutions.indexOf(item.id) != -1) {
-        // Don't print any data at the position level, but capture shared data
+      if (!addonOptionsInstitutions || parsedInstitutions.indexOf(item.id) != -1) {
+        // Add sad 
         shared = ['Cash', 'cash', 'Cash', null];
         // Loop through investments for each position
         item.investments.forEach(function (element) {
