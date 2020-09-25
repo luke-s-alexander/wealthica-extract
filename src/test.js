@@ -179,7 +179,7 @@ $(function () {
     jsonData.forEach(item => {
       // Only capture information for rows where institutions are in filter
       if(!addonOptionsInstitutions || parsedInstitutions.indexOf(item.id) != -1) {
-      // Add sad 
+      // Create shared column data for cash
         shared = [ 
           'Cash', 
           'cash', 

@@ -31,7 +31,6 @@ $(function () {
 
   $('#getAssetsCustom').on('click', function () {
     $(this).attr('disabled', 'disabled');
-
     addon.api.getPositions(getQueryFromOptions(addonOptions)).then(function (response) {
       $('#result').html('List Positions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
       exportAssetsCustomToCsvFile(response);
@@ -168,16 +167,25 @@ $(function () {
     // Don't set column headers (assume it's set by parent function)
     let csvStr = "";
     var shared = []
-
+    // Capture institutions from filters to be used when generating rows
+    var addonOptionsInstitutions = getQueryFromOptions(addonOptions).institutions;
+    // Create array for institutions from filters
+    var parsedInstitutions = [];    
+    // If filters are applied, create array of institutions
+    if ( addonOptionsInstitutions ) {
+        var parsedInstitutions = addonOptionsInstitutions.split(","); 
+    };
     // Loop through position results
     jsonData.forEach(item => {
-      // Don't print any data at the position level, but capture shared data
-      shared = [ 
+      // Only capture information for rows where institutions are in filter
+      if(!addonOptionsInstitutions || parsedInstitutions.indexOf(item.id) != -1) {
+      // Create shared column data for cash
+        shared = [ 
           'Cash', 
           'cash', 
           'Cash', 
            null 
-      ];
+        ];
       	// Loop through investments for each position
       	item.investments.forEach(element => {
       	  if(element.cash) {	
@@ -190,7 +198,7 @@ $(function () {
               element.cash, 
               // null,             -- Removed to simplify export file
               // null              -- Removed to simplify export file 
-         	];
+         	  ];
           	// Add investment data to shared position data
           	investment_data = shared.concat(investment_data);
           	// Loop through investment data and create csv row
@@ -199,12 +207,13 @@ $(function () {
                	if( (index > 0) && (index < investment_data.length) ) {
                   csvStr += columnDelimiter;
               	};
-              csvStr += entry;
+                csvStr += entry;
               });
-            csvStr += lineDelimiter
+              csvStr += lineDelimiter
           	};
           };
         });
+      };
     });
     return csvStr;
   };
@@ -216,7 +225,6 @@ $(function () {
       if(jsonData.length == 0) {
             return '';
           };
-
       // Call the getInstitutions API for cash balances and set the function response to variable cashCsv
       let cashCsv = await addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response){
        return parseCashCustomToCsvFile(response);
@@ -247,44 +255,44 @@ $(function () {
       var shared = []
       // Loop through position results
       jsonData.forEach(item => {
-        // Don't print any data at the position level, but capture shared data
-        shared = [ 
-            item.category, 
-            item.class, 
-            item.security.symbol, 
-            item.security.aliases[0] 
-        ];
-        // Loop through investments for each position
-        item.investments.forEach(element => {
-          var investment = element.investment;
+	        // Don't print any data at the position level, but capture shared data
+	        shared = [ 
+	            item.category, 
+	            item.class, 
+	            item.security.symbol, 
+	            item.security.aliases[0] 
+	        ];
+	        // Loop through investments for each position
+	        item.investments.forEach(element => {
+	          var investment = element.investment;
 
-          	// Only capture row data if market_value is not zero
-          	if(element.market_value) {
-	          // split field investment into account, account_type and account_currency
-	        	var parsedInvestment = investment.split(":");
-	          	var investment_data = [
-	              parsedInvestment,
-              	  // parsedInvestment[0], // -- Removed (type portion) to simplify export file
-              	  // parsedInvestment[1],    -- Removed (currency portion) to simplify export file
-              	  // element.quantity,    -- Removed to simplify export file
-              	  // element.book_value,  -- Removed to simplify export file
-	              element.market_value
-	              // , 
-	              // element.gain_percent,-- Removed to simplify export file
-	              // element.gain_amount  -- Removed to simplify export file
-	          	];
-	          	// Add investment data to shared position data
-	          	investment_data = shared.concat(investment_data);
-          	  	// Loop through investment data and create csv row      	  
-              	investment_data.forEach((entry, index) => {
-	              if( (index > 0) && (index < investment_data.length) ) {
-	               	csvStr += columnDelimiter;
-              	  };
-                  csvStr += entry;
-          	  	}); 
-          	  	csvStr += lineDelimiter
-          	};
-        });
+	          	// Only capture row data if market_value is not zero
+	          	if(element.market_value) {
+		          // split field investment into account, account_type and account_currency
+		        	var parsedInvestment = investment.split(":");
+		          	var investment_data = [
+		              parsedInvestment,
+	              	  // parsedInvestment[0], // -- Removed (type portion) to simplify export file
+	              	  // parsedInvestment[1],    -- Removed (currency portion) to simplify export file
+	              	  // element.quantity,    -- Removed to simplify export file
+	              	  // element.book_value,  -- Removed to simplify export file
+		              element.market_value
+		              // , 
+		              // element.gain_percent,-- Removed to simplify export file
+		              // element.gain_amount  -- Removed to simplify export file
+		          	];
+		          	// Add investment data to shared position data
+		          	investment_data = shared.concat(investment_data);
+	          	  	// Loop through investment data and create csv row      	  
+	              	investment_data.forEach((entry, index) => {
+		              if( (index > 0) && (index < investment_data.length) ) {
+		               	csvStr += columnDelimiter;
+	              	  };
+	                  csvStr += entry;
+	          	  	}); 
+	          	  	csvStr += lineDelimiter
+	          	};
+	        });
       });
       csvStr = csvStr.concat(cashCsv);
       return encodeURIComponent(csvStr);
