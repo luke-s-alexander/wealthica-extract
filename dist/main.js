@@ -119,7 +119,6 @@ $(function () {
 
             case 3:
               ;
-
               // Call the getInstitutions API for cash balances and set the function response to variable cashCsv
               _context.next = 6;
               return addon.api.getInstitutions(getQueryFromOptions(addonOptions)).then(function (response) {
@@ -273,7 +272,6 @@ $(function () {
 
   $('#getAssetsCustom').on('click', function () {
     $(this).attr('disabled', 'disabled');
-
     addon.api.getPositions(getQueryFromOptions(addonOptions)).then(function (response) {
       $('#result').html('List Positions Result:<br><code>' + JSON.stringify(response, null, 2) + '</code>');
       exportAssetsCustomToCsvFile(response);
@@ -399,32 +397,42 @@ $(function () {
     // Don't set column headers (assume it's set by parent function)
     var csvStr = "";
     var shared = [];
-
+    // Capture institutions from filters to be used when generating rows
+    var addonOptionsInstitutions = getQueryFromOptions(addonOptions).institutions;
+    // Create array for institutions from filters
+    var parsedInstitutions = [];
+    // If filters are applied, create array of institutions
+    if (addonOptionsInstitutions) {
+      var parsedInstitutions = addonOptionsInstitutions.split(",");
+    };
     // Loop through position results
     jsonData.forEach(function (item) {
-      // Don't print any data at the position level, but capture shared data
-      shared = ['Cash', 'cash', 'Cash', null];
-      // Loop through investments for each position
-      item.investments.forEach(function (element) {
-        if (element.cash) {
-          var investment_data = [element.id, element.type, element.currency,
-          // null,             -- Removed to simplify export file 
-          // element.cash,     -- Removed to simplify export file
-          element.cash];
-          // Add investment data to shared position data
-          investment_data = shared.concat(investment_data);
-          // Loop through investment data and create csv row
-          if (investment_data[9] != 0) {
-            investment_data.forEach(function (entry, index) {
-              if (index > 0 && index < investment_data.length) {
-                csvStr += columnDelimiter;
-              };
-              csvStr += entry;
-            });
-            csvStr += lineDelimiter;
+      // Only capture information for rows where institutions are in filter
+      if (!addonOptionsInstitutions || parsedInstitutions.indexOf(item.id) != -1) {
+        // Create shared column data for cash
+        shared = ['Cash', 'cash', 'Cash', null];
+        // Loop through investments for each position
+        item.investments.forEach(function (element) {
+          if (element.cash) {
+            var investment_data = [element.id, element.type, element.currency,
+            // null,             -- Removed to simplify export file 
+            // element.cash,     -- Removed to simplify export file
+            element.cash];
+            // Add investment data to shared position data
+            investment_data = shared.concat(investment_data);
+            // Loop through investment data and create csv row
+            if (investment_data[9] != 0) {
+              investment_data.forEach(function (entry, index) {
+                if (index > 0 && index < investment_data.length) {
+                  csvStr += columnDelimiter;
+                };
+                csvStr += entry;
+              });
+              csvStr += lineDelimiter;
+            };
           };
-        };
-      });
+        });
+      };
     });
     return csvStr;
   };;
