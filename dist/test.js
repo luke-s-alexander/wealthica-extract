@@ -414,6 +414,7 @@ $(function () {
       if (!addonOptionsInstitutions || parsedInstitutions.indexOf(item.id) != -1) {
         // Create shared column data for cash
         shared = ['Cash', 'cash', 'Cash', null];
+        console.log(item.investments);
         // Loop through investments for each position
         item.investments.forEach(function (element) {
           if (element.cash) {
@@ -421,6 +422,23 @@ $(function () {
             // null,             -- Removed to simplify export file 
             // element.cash,     -- Removed to simplify export file
             element.cash];
+            // Add investment data to shared position data
+            investment_data = shared.concat(investment_data);
+            // Loop through investment data and create csv row
+            if (investment_data[9] != 0) {
+              investment_data.forEach(function (entry, index) {
+                if (index > 0 && index < investment_data.length) {
+                  csvStr += columnDelimiter;
+                };
+                csvStr += entry;
+              });
+              csvStr += lineDelimiter;
+            };
+          } else if (elelment.type = "credit") {
+            var investment_data = [element.id, element.type, element.currency,
+            // null,             -- Removed to simplify export file 
+            // element.cash,     -- Removed to simplify export file
+            element.currency_value];
             // Add investment data to shared position data
             investment_data = shared.concat(investment_data);
             // Loop through investment data and create csv row

@@ -186,9 +186,10 @@ $(function () {
           'Cash', 
            null 
         ];
+        console.log(item.investments);
       	// Loop through investments for each position
       	item.investments.forEach(element => {
-      	  if(element.cash) {	
+      	  if(element.cash) {
           	var investment_data = [
               element.id,
               element.type,
@@ -211,6 +212,29 @@ $(function () {
               });
               csvStr += lineDelimiter
           	};
+          } else if (elelment.type = "credit") {  
+            var investment_data = [
+              element.id,
+              element.type,
+              element.currency,
+              // null,             -- Removed to simplify export file 
+              // element.cash,     -- Removed to simplify export file
+              element.currency_value, 
+              // null,             -- Removed to simplify export file
+              // null              -- Removed to simplify export file 
+            ];
+            // Add investment data to shared position data
+            investment_data = shared.concat(investment_data);
+            // Loop through investment data and create csv row
+            if( (investment_data[9] != 0) ) {
+              investment_data.forEach((entry, index) => {
+                if( (index > 0) && (index < investment_data.length) ) {
+                  csvStr += columnDelimiter;
+                };
+                csvStr += entry;
+              });
+              csvStr += lineDelimiter
+            };
           };
         });
       };
