@@ -15,52 +15,85 @@ Cash,cash,Cash,null,07XJH9S,rrsp,cad,300.01
 Cash,cash,Cash,null,117YH6J,tfsa,cad,200.01
 `;
 
-function sortCsv (csvStr) { 
-// Convert csv to JSON
-	// capture keys from header row
-	csvRowsArray = csvStr.split('\n');
-	keys = csvRowsArray[0].split(',');
-	row1 = csvRowsArray[1].split(',');
-	
-	objectRowsArray = [];
-	csvRowsArray.forEach((element, index) => {
-		// Skip header row (index=0) and blank rows
-		if (index > 0 && csvRowsArray[index] != '') {
-			// create array for row
-			var row = csvRowsArray[index].split(',');
-			// create object to be populated with data from row array
-			var rowObject = {};
-			// Create object properties from keys and populate with row array data
-			keys.forEach((key, index) => { 
-				rowObject[key] = row[index];
-			});
-			// Index=0 is skipped (it is header row)
-			objectRowsArray[index -1] = rowObject;
-		};
-	});
-	var sortKeys = ['account', 'class', 'symbol'];
+function sortCsv (csvStr) { 	
+// Capture the keys from header row
+csvRowsArray = csvStr.split('\n');
+keys = csvRowsArray[0].split(',');
 
-	objectRowsArray.sort(dynamicSortMultiple("account","-class","symbol"));
-
-	// console.log(objectRowsArray[0].account);
-	// objectRowsArray.sort((a,b) => (a.account > b.account) ? 1 : ((b.account > a.account) ? -1 : 0));
-	console.log(objectRowsArray);
+// Build an array of rows as objects 
+objectRowsArray = [];
+csvRowsArray.forEach((element, index) => {
+  // Skip header row (index=0) and blank rows
+  if (index > 0 && csvRowsArray[index] != '') {
+    // Create array for row
+    var row = csvRowsArray[index].split(',');
+    // Create object to be populated with data from row array
+    var rowObject = {};
+    // Create object properties from keys and populate with row array data
+    keys.forEach((key, index) => { 
+      rowObject[key] = row[index];
+    });
+    // Index=0 is skipped (it is header row)
+    objectRowsArray[index -1] = rowObject;
+  };
+});
+sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("account","-class","symbol"));
+sortedCsv = objectArrayToCsv(sortedObjectArray);
 
 
-	// Sort array of objects on object properties?
+// console.log(objectRowsArray[0].account);
+// objectRowsArray.sort((a,b) => (a.account > b.account) ? 1 : ((b.account > a.account) ? -1 : 0));
+console.log(objectRowsArray);
+console.log(sortedCsv);
+
+
+// Sort array of objects on object properties?
 
 // For each account
-	// for each class 
-		// sort symbol
-	// sort classs
+// for each class 
+	// sort symbol
+// sort classs
 // sort account
 
 
 // convert sorted JSON to sorted csv
 
 // return sorted csv string
-
 };
+
+function objectArrayToCsv(objectRowsArray) {
+    // Set formats
+    var columnDelimiter = ',';
+    var lineDelimiter = '\n';
+    var csvStr = "";
+
+    // Create header row
+    firstRowObject = objectRowsArray[0];
+    Object.keys(firstRowObject).forEach((value, index) => {
+		if( (index > 0) && (index < Object.keys(firstRowObject).length) ) {
+			csvStr += columnDelimiter;
+		};
+		csvStr += value;
+    });
+    csvStr += lineDelimiter;
+
+    // For each object in the array
+	objectRowsArray.forEach((entry, index) => {
+		// loop through object properties, add to csvStr with separator
+		Object.values(entry).forEach((value, index) => {
+			// Do not add column delimiter before first column
+			if( (index > 0) && (index < Object.keys(entry).length) ) {
+				csvStr += columnDelimiter;
+			};
+			// Add value to row string 
+			csvStr += value;
+		});
+		// Add row delimiter to row string
+		csvStr += lineDelimiter;
+	});
+	return csvStr;
+};	
+
 
 function dynamicSortMultiple() {
     /*

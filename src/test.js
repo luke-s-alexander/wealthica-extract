@@ -608,7 +608,9 @@ $(function () {
         objectRowsArray[index -1] = rowObject;
       };
     });
-    return objectRowsArray.sort(dynamicSortMultiple("account","-class","symbol"));
+
+    sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("account","-class","symbol"));
+    return objectArrayToCsv(sortedObjectArray);
   };
 
   function dynamicSortMultiple() {
@@ -644,5 +646,37 @@ $(function () {
         var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
         return result * sortOrder;
     }
-  };  
+  };
+  function objectArrayToCsv(objectRowsArray) {
+      // Set formats
+      var columnDelimiter = ',';
+      var lineDelimiter = '\n';
+      var csvStr = "";
+
+      // Create header row
+      firstRowObject = objectRowsArray[0];
+      Object.keys(firstRowObject).forEach((value, index) => {
+      if( (index > 0) && (index < Object.keys(firstRowObject).length) ) {
+        csvStr += columnDelimiter;
+      };
+      csvStr += value;
+      });
+      csvStr += lineDelimiter;
+
+      // For each object in the array
+    objectRowsArray.forEach((entry, index) => {
+      // loop through object properties, add to csvStr with separator
+      Object.values(entry).forEach((value, index) => {
+        // Do not add column delimiter before first column
+        if( (index > 0) && (index < Object.keys(entry).length) ) {
+          csvStr += columnDelimiter;
+        };
+        // Add value to row string 
+        csvStr += value;
+      });
+      // Add row delimiter to row string
+      csvStr += lineDelimiter;
+    });
+    return csvStr;
+  };      
 });
