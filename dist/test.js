@@ -133,7 +133,7 @@ $(function () {
               cashCsv = _context.sent;
 
               // Create array of column headers
-              _keys = ['category', 'class', 'symbol', 'alias', 'account', 'account_type', 'account_currency',
+              _keys = ['category', 'class', 'symbol', 'alias', 'institution', 'account', 'account_type', 'account_currency',
               //'quantity',         -- Removed to simplify export file
               //'book_value',       -- Removed to simplify export file
               'market_value'
@@ -162,7 +162,7 @@ $(function () {
                   if (element.market_value) {
                     // split field investment into account, account_type and account_currency
                     var parsedInvestment = investment.split(":");
-                    var investment_data = [parsedInvestment,
+                    var investment_data = [element.institution, parsedInvestment,
                     // parsedInvestment[0], // -- Removed (type portion) to simplify export file
                     // parsedInvestment[1],    -- Removed (currency portion) to simplify export file
                     // element.quantity,    -- Removed to simplify export file
@@ -413,7 +413,8 @@ $(function () {
       // Only capture information for rows where institutions are in filter
       if (!addonOptionsInstitutions || parsedInstitutions.indexOf(item.id) != -1) {
         // Create shared column data for cash
-        shared = ['Cash', 'cash', 'Cash', null];
+        shared = ['Cash', 'cash', 'Cash', null, item.id // Capture ID of institution for sorting
+        ];
         console.log(item.investments);
         // Loop through investments for each position
         item.investments.forEach(function (element) {
@@ -434,7 +435,7 @@ $(function () {
               });
               csvStr += lineDelimiter;
             };
-          } else if (elelment.type = "credit") {
+          } else if (element.type =  true && element.currency_value) {
             var investment_data = [element.id, element.type, element.currency,
             // null,             -- Removed to simplify export file 
             // element.cash,     -- Removed to simplify export file
@@ -677,7 +678,7 @@ $(function () {
       };
     });
 
-    sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("account", "-class", "symbol"));
+    sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("institution", "account", "-class", "symbol"));
     return objectArrayToCsv(sortedObjectArray);
   };
 

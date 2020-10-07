@@ -184,7 +184,8 @@ $(function () {
           'Cash', 
           'cash', 
           'Cash', 
-           null 
+           null,
+          item.id // Capture ID of institution for sorting
         ];
         console.log(item.investments);
       	// Loop through investments for each position
@@ -212,30 +213,30 @@ $(function () {
               });
               csvStr += lineDelimiter
           	};
-          } else if (elelment.type = "credit") {  
-            var investment_data = [
-              element.id,
-              element.type,
-              element.currency,
-              // null,             -- Removed to simplify export file 
-              // element.cash,     -- Removed to simplify export file
-              element.currency_value, 
-              // null,             -- Removed to simplify export file
-              // null              -- Removed to simplify export file 
-            ];
-            // Add investment data to shared position data
-            investment_data = shared.concat(investment_data);
-            // Loop through investment data and create csv row
-            if( (investment_data[9] != 0) ) {
-              investment_data.forEach((entry, index) => {
-                if( (index > 0) && (index < investment_data.length) ) {
-                  csvStr += columnDelimiter;
-                };
-                csvStr += entry;
-              });
-              csvStr += lineDelimiter
-            };
-          };
+          	} else if (element.type = "credit" && element.currency_value) {  
+            	var investment_data = [
+	              element.id,
+	              element.type,
+	              element.currency,
+	              // null,             -- Removed to simplify export file 
+	              // element.cash,     -- Removed to simplify export file
+	              element.currency_value, 
+	              // null,             -- Removed to simplify export file
+	              // null              -- Removed to simplify export file 
+	            ];
+	            // Add investment data to shared position data
+	            investment_data = shared.concat(investment_data);
+	            // Loop through investment data and create csv row
+	            if( (investment_data[9] != 0) ) {
+	              investment_data.forEach((entry, index) => {
+	                if( (index > 0) && (index < investment_data.length) ) {
+	                  csvStr += columnDelimiter;
+	                };
+	                csvStr += entry;
+	              });
+	              csvStr += lineDelimiter
+	            };
+          	};
         });
       };
     });
@@ -260,7 +261,8 @@ $(function () {
           'category', 
           'class', 
           'symbol', 
-          'alias', 
+          'alias',
+          'institution', 
           'account',
           'account_type',
           'account_currency',
@@ -295,6 +297,7 @@ $(function () {
 		          // split field investment into account, account_type and account_currency
 		        	var parsedInvestment = investment.split(":");
 		          	var investment_data = [
+		          	  element.institution,
 		              parsedInvestment,
 	              	  // parsedInvestment[0], // -- Removed (type portion) to simplify export file
 	              	  // parsedInvestment[1],    -- Removed (currency portion) to simplify export file
@@ -633,7 +636,7 @@ $(function () {
       };
     });
 
-    sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("account","-class","symbol"));
+    sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("institution","account","-class","symbol"));
     return objectArrayToCsv(sortedObjectArray);
   };
 
