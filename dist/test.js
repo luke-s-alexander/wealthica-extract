@@ -133,7 +133,7 @@ $(function () {
               cashCsv = _context.sent;
 
               // Create array of column headers
-              _keys = ['category', 'class', 'symbol', 'alias', 'institution', 'account', 'account_type', 'account_currency',
+              _keys = ['score', 'category', 'class', 'symbol', 'alias', 'institution', 'account', 'account_type', 'account_currency',
               //'quantity',         -- Removed to simplify export file
               //'book_value',       -- Removed to simplify export file
               'market_value'
@@ -152,8 +152,10 @@ $(function () {
               // Loop through position results
 
               jsonData.forEach(function (item) {
+                // CALL FUNCTION HERE TO ASSIGN SCORE
+                var score = assignSortScore(item);
                 // Don't print any data at the position level, but capture shared data
-                shared = [item.category, item.class, item.security.symbol, item.security.aliases[0]];
+                shared = [score, item.category, item.class, item.security.symbol, item.security.aliases[0]];
                 // Loop through investments for each position
                 item.investments.forEach(function (element) {
                   var investment = element.investment;
@@ -388,7 +390,7 @@ $(function () {
       return '';
     };
     // Create array of column headers
-    var keys = ['category', 'class', 'symbol', 'alias', 'account', 'account_type', 'account_currency',
+    var keys = ['score', 'category', 'class', 'symbol', 'alias', 'account', 'account_type', 'account_currency',
     // 'quantity',         -- Removed to simplify export file
     // 'book_value',       -- Removed to simplify export file
     'market_value'];
@@ -409,11 +411,14 @@ $(function () {
       var parsedInstitutions = addonOptionsInstitutions.split(",");
     };
     // Loop through position results
+    console.log(jsonData);
     jsonData.forEach(function (item) {
+      // CALL FUNCTION HERE TO ASSIGN SCORE
+      var score = assignSortScore(item);
       // Only capture information for rows where institutions are in filter
       if (!addonOptionsInstitutions || parsedInstitutions.indexOf(item.id) != -1) {
         // Create shared column data for cash
-        shared = ['Cash', 'cash', 'Cash', null, item.id // Capture ID of institution for sorting
+        shared = [score, 'Cash', 'cash', 'Cash', null, item.id // Capture ID of institution for sorting
         ];
         // Loop through investments for each position
         item.investments.forEach(function (element) {
@@ -776,14 +781,31 @@ $(function () {
         // Loop through the object
         if (~k.indexOf(keyPart)) {
           // If the current key contains the string we're looking for
-          delete obj[k]; // Delete obj[key];
+          delete array[k]; // Delete obj[key];
         };
       };
     });
-    return objectArray;
+    return array;
+  };
+
+  /**
+   * Assigns a score (for sorting) to institutions if they have a registered account.
+   *
+   * @param {object} institution is the institution to be assigned a score. 
+   * @return {number} score is the sore given to the institution.
+   */
+  function assignSortScore(institution) {
+
+    var score = 0;
+    institution.investment.forEach(function (entry) {
+      // Loop through investments
+      if (!score && entry.type == "tfsa" | entry.type == "rrsp" | entry.type == "dpsp") {
+        score += 1; // Assign a score to those that have a registered account
+      };
+    });
+    return score;
   };
 });
-
 /**
 * NOTES for sorting groups for investments:
 ** Create sorting groups for Investments (investment.type in ('tfsa', 'rrsp', 'dpsp'))

@@ -146,18 +146,19 @@ $(function () {
     };
     // Create array of column headers
     let keys = [
-        'category', 
-        'class', 
-        'symbol', 
-        'alias', 
-        'account',
-        'account_type',
-        'account_currency',
-        // 'quantity',         -- Removed to simplify export file
-        // 'book_value',       -- Removed to simplify export file
-        'market_value', 
-        // 'gain_percent',     -- Removed to simplify export file
-        // 'gain_amount'       -- Removed to simplify export file
+      'score',
+      'category', 
+      'class', 
+      'symbol', 
+      'alias', 
+      'account',
+      'account_type',
+      'account_currency',
+      // 'quantity',         -- Removed to simplify export file
+      // 'book_value',       -- Removed to simplify export file
+      'market_value', 
+      // 'gain_percent',     -- Removed to simplify export file
+      // 'gain_amount'       -- Removed to simplify export file
     ];
     // Set formats
     let columnDelimiter = ',';
@@ -176,11 +177,15 @@ $(function () {
         var parsedInstitutions = addonOptionsInstitutions.split(","); 
     };
     // Loop through position results
+    console.log(jsonData);
     jsonData.forEach(item => {
+      // CALL FUNCTION HERE TO ASSIGN SCORE
+      var score = assignSortScore(item);
       // Only capture information for rows where institutions are in filter
       if(!addonOptionsInstitutions || parsedInstitutions.indexOf(item.id) != -1) {
       // Create shared column data for cash
-        shared = [ 
+        shared = [
+          score, 
           'Cash', 
           'cash', 
           'Cash', 
@@ -257,6 +262,7 @@ $(function () {
       });
       // Create array of column headers
       let keys = [
+          'score',
           'category', 
           'class', 
           'symbol', 
@@ -280,9 +286,12 @@ $(function () {
       var shared = []
       // Loop through position results
       jsonData.forEach(item => {
+        // CALL FUNCTION HERE TO ASSIGN SCORE
+        var score = assignSortScore(item);
 	        // Don't print any data at the position level, but capture shared data
-	        shared = [ 
-	            item.category, 
+	        shared = [
+	            score,
+              item.category, 
 	            item.class, 
 	            item.security.symbol, 
 	            item.security.aliases[0] 
@@ -726,17 +735,33 @@ $(function () {
  */
   function deleteFromObjectArray(keyPart, array ) {
 
-	array.forEach(entry => {	  // Loop through array of objects
-	  for (var k in entry){       // Loop through the object
-	    if(~k.indexOf(keyPart)){  // If the current key contains the string we're looking for
-	      delete obj[k];          // Delete obj[key];
-	    };
-	  };
-	});
-	return objectArray;
+  	array.forEach(entry => {	  // Loop through array of objects
+  	  for (var k in entry){       // Loop through the object
+  	    if(~k.indexOf(keyPart)){  // If the current key contains the string we're looking for
+  	      delete array[k];          // Delete obj[key];
+  	    };
+  	  };
+  	});
+	  return array;
   };
-});
 
+/**
+ * Assigns a score (for sorting) to institutions if they have a registered account.
+ *
+ * @param {object} institution is the institution to be assigned a score. 
+ * @return {number} score is the sore given to the institution.
+ */
+  function assignSortScore(institution) {
+
+    var score = 0;
+    institution.investment.forEach(entry => {    // Loop through investments
+      if (!score && (entry.type == "tfsa" |  entry.type == "rrsp" |  entry.type == "dpsp" )) {
+        score += 1;      // Assign a score to those that have a registered account
+      };
+    });
+    return score;
+  };
+});  
 /**
 * NOTES for sorting groups for investments:
 ** Create sorting groups for Investments (investment.type in ('tfsa', 'rrsp', 'dpsp'))
