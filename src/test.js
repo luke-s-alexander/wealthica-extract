@@ -143,7 +143,8 @@ $(function () {
   function parseCashCustomToCsvFile(jsonData) {
     if(jsonData.length == 0) {
       return '';
-    }
+    };
+    console.log(jsonData);
     // Create array of column headers
     let keys = [
         'category', 
@@ -187,10 +188,10 @@ $(function () {
            null,
           item.id // Capture ID of institution for sorting
         ];
-        console.log(item.investments);
       	// Loop through investments for each position
       	item.investments.forEach(element => {
       	  if(element.cash) {
+            console.log(element.cash, element.name);
           	var investment_data = [
               element.id,
               element.type,
@@ -213,7 +214,7 @@ $(function () {
               });
               csvStr += lineDelimiter
           	};
-          	} else if (element.type = "credit" && element.currency_value) {  
+          	} else if (element.type == "credit" && element.currency_value) {  
             	var investment_data = [
 	              element.id,
 	              'credit',

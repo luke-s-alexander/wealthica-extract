@@ -386,7 +386,8 @@ $(function () {
   function parseCashCustomToCsvFile(jsonData) {
     if (jsonData.length == 0) {
       return '';
-    }
+    };
+    console.log(jsonData);
     // Create array of column headers
     var keys = ['category', 'class', 'symbol', 'alias', 'account', 'account_type', 'account_currency',
     // 'quantity',         -- Removed to simplify export file
@@ -415,10 +416,10 @@ $(function () {
         // Create shared column data for cash
         shared = ['Cash', 'cash', 'Cash', null, item.id // Capture ID of institution for sorting
         ];
-        console.log(item.investments);
         // Loop through investments for each position
         item.investments.forEach(function (element) {
           if (element.cash) {
+            console.log(element.cash, element.name);
             var investment_data = [element.id, element.type, element.currency,
             // null,             -- Removed to simplify export file 
             // element.cash,     -- Removed to simplify export file
@@ -435,7 +436,7 @@ $(function () {
               });
               csvStr += lineDelimiter;
             };
-          } else if (element.type =  true && element.currency_value) {
+          } else if (element.type == "credit" && element.currency_value) {
             var investment_data = [element.id, 'credit', element.currency,
             // null,             -- Removed to simplify export file 
             // element.cash,     -- Removed to simplify export file
