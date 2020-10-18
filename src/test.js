@@ -216,7 +216,7 @@ $(function () {
           	} else if (element.type = "credit" && element.currency_value) {  
             	var investment_data = [
 	              element.id,
-	              element.type,
+	              'credit',
 	              element.currency,
 	              // null,             -- Removed to simplify export file 
 	              // element.cash,     -- Removed to simplify export file

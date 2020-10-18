@@ -436,7 +436,7 @@ $(function () {
               csvStr += lineDelimiter;
             };
           } else if (element.type =  true && element.currency_value) {
-            var investment_data = [element.id, element.type, element.currency,
+            var investment_data = [element.id, 'credit', element.currency,
             // null,             -- Removed to simplify export file 
             // element.cash,     -- Removed to simplify export file
             element.currency_value];
