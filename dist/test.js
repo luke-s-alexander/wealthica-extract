@@ -152,7 +152,7 @@ $(function () {
               // Loop through position results
 
               jsonData.forEach(function (item) {
-                // CALL FUNCTION HERE TO ASSIGN SCORE
+                // Retrieve a score for the item, to be used when sorting
                 var score = assignSortScore(item);
                 // Don't print any data at the position level, but capture shared data
                 shared = [score, item.category, item.class, item.security.symbol, item.security.aliases[0]];
@@ -411,9 +411,8 @@ $(function () {
       var parsedInstitutions = addonOptionsInstitutions.split(",");
     };
     // Loop through position results
-    console.log(jsonData);
     jsonData.forEach(function (item) {
-      // CALL FUNCTION HERE TO ASSIGN SCORE
+      // Retrieve a score for the item, to be used when sorting
       var score = assignSortScore(item);
       // Only capture information for rows where institutions are in filter
       if (!addonOptionsInstitutions || parsedInstitutions.indexOf(item.id) != -1) {
@@ -683,9 +682,9 @@ $(function () {
     });
     // Sorting parameters passed to dynmaicSortMultiple are hard-coded for now:
     sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("-score", "institution", "account", "-class", "symbol"));
-    // Delete institution row after using it for sorting
-    sortedObjectArray = deleteFromObjectArray('institution', sortedObjectArray);
-    sortedObjectArray = deleteFromObjectArray('score', sortedObjectArray);
+    // Delete institution and score row after using them for sorting
+    sortedObjectArray = deleteFromObjectArray(sortedObjectArray, 'institution', 'score');
+    // sortedObjectArray = deleteFromObjectArray(sortedObjectArray);
     return objectArrayToCsv(sortedObjectArray);
   };
 
@@ -768,24 +767,30 @@ $(function () {
   /**
    * Returns array of objects with the specified keys removed form each object. 
    *
-   * @param {string} keyPart is the property to be deleted from each object
-   * in the array of objects.
-   * @param {array} array is the array (of objects) to be modified.
+   * @param {object} arguments contains the array of objects to be modified as 
+   * the first param followed by an number of columns/keys to be removed.
    * @return {array} objectArray is the array of objects, each with
    * property keyPart deleted.
    */
-  function deleteFromObjectArray(keyPart, array) {
+  function deleteFromObjectArray() {
+    var _arguments = arguments;
 
-    array.forEach(function (entry) {
-      // Loop through array of objects
-      for (var k in entry) {
-        // Loop through the object
-        if (~k.indexOf(keyPart)) {
-          // If the current key contains the string we're looking for
-          delete entry[k]; // Delete obj[key];
+    var props = arguments; // Capture args and assign to variable
+    var array = arguments[0]; // First arg is the array to be modified
+
+    for (var i = 1; i < arguments.length; i++) {
+      // Loop through keys passed in arguments
+      array.forEach(function (entry) {
+        // Loop through array of objects
+        for (var k in entry) {
+          // Loop through the object
+          if (~k.indexOf(_arguments[i])) {
+            // If the current key contains the string we're looking for
+            delete entry[k]; // Delete obj[key];
+          };
         };
-      };
-    });
+      });
+    };
     return array;
   };
 
