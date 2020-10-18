@@ -146,18 +146,19 @@ $(function () {
     };
     // Create array of column headers
     let keys = [
-        'category', 
-        'class', 
-        'symbol', 
-        'alias', 
-        'account',
-        'account_type',
-        'account_currency',
-        // 'quantity',         -- Removed to simplify export file
-        // 'book_value',       -- Removed to simplify export file
-        'market_value', 
-        // 'gain_percent',     -- Removed to simplify export file
-        // 'gain_amount'       -- Removed to simplify export file
+      'score',
+      'category', 
+      'class', 
+      'symbol', 
+      'alias', 
+      'account',
+      'account_type',
+      'account_currency',
+      // 'quantity',         -- Removed to simplify export file
+      // 'book_value',       -- Removed to simplify export file
+      'market_value', 
+      // 'gain_percent',     -- Removed to simplify export file
+      // 'gain_amount'       -- Removed to simplify export file
     ];
     // Set formats
     let columnDelimiter = ',';
@@ -177,10 +178,13 @@ $(function () {
     };
     // Loop through position results
     jsonData.forEach(item => {
+      // Retrieve a score for the item, to be used when sorting
+      var score = assignSortScore(item);
       // Only capture information for rows where institutions are in filter
       if(!addonOptionsInstitutions || parsedInstitutions.indexOf(item.id) != -1) {
       // Create shared column data for cash
-        shared = [ 
+        shared = [
+          score, 
           'Cash', 
           'cash', 
           'Cash', 
@@ -215,7 +219,7 @@ $(function () {
           	} else if (element.type == "credit" && element.currency_value) {  
             	var investment_data = [
 	              element.id,
-	              'credit',
+	              element.type,
 	              element.currency,
 	              // null,             -- Removed to simplify export file 
 	              // element.cash,     -- Removed to simplify export file
@@ -257,6 +261,7 @@ $(function () {
       });
       // Create array of column headers
       let keys = [
+          'score',
           'category', 
           'class', 
           'symbol', 
@@ -280,9 +285,12 @@ $(function () {
       var shared = []
       // Loop through position results
       jsonData.forEach(item => {
+        // Retrieve a score for the item, to be used when sorting
+        var score = assignSortScore(item);
 	        // Don't print any data at the position level, but capture shared data
-	        shared = [ 
-	            item.category, 
+	        shared = [
+	            score,
+              item.category, 
 	            item.class, 
 	            item.security.symbol, 
 	            item.security.aliases[0] 
@@ -634,8 +642,11 @@ $(function () {
         objectRowsArray[index -1] = rowObject;
       };
     });
-
-    sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("institution","account","-class","symbol"));
+    // Sorting parameters passed to dynmaicSortMultiple are hard-coded for now:
+    sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("-score","institution","account","-class","symbol"));
+    // Delete institution and score row after using them for sorting
+    sortedObjectArray = deleteFromObjectArray(sortedObjectArray, 'institution', 'score');
+    // sortedObjectArray = deleteFromObjectArray(sortedObjectArray);
     return objectArrayToCsv(sortedObjectArray);
   };
 
@@ -673,6 +684,13 @@ $(function () {
         return result * sortOrder;
     }
   };
+
+/**
+ * Returns comma separated table as a string. 
+ *
+ * @param {object} objectRowArray is the array of objects to be converted.
+ * @return {string} csvStr is the CSV string returned.
+ */
   function objectArrayToCsv(objectRowsArray) {
       // Set formats
       var columnDelimiter = ',';
@@ -704,5 +722,58 @@ $(function () {
       csvStr += lineDelimiter;
     });
     return csvStr;
-  };      
-});
+  };
+
+/**
+ * Returns array of objects with the specified keys removed form each object. 
+ *
+ * @param {object} arguments contains the array of objects to be modified as 
+ * the first argument followed by any number of columns/keys to be removed.
+ * @return {array} objectArray is the array of objects, each with
+ * property keyPart deleted.
+ */
+  function deleteFromObjectArray() {
+    var props = arguments;   // Capture args and assign to variable
+    var array = arguments[0];   // First arg is the array to be modified
+
+    for (var i =1; i < arguments.length; i++) {   // Loop through keys passed in arguments
+    	array.forEach(entry => {	  // Loop through array of objects
+    	  for (var k in entry){     // Loop through the object
+    	    if(~k.indexOf(arguments[i])){    // If the current key contains the string we're looking for
+    	      delete entry[k];      // Delete obj[key];
+    	    };
+    	  };
+    	});
+    };
+	  return array;
+  };
+
+/**
+ * Assigns a score (for sorting) to entries in an getInstitution or a getPosition
+ * response if they have a registered account.
+ *
+ * @param {object} institution is the institution/position to be assigned a score. 
+ * @return {number} score is the score given to the institution/position.
+ */
+  function assignSortScore(institution) {
+
+    var score = 0;
+    institution.investments.forEach(entry => {    // Loop through investments
+      if ( entry.hasOwnProperty('investment') ) { // Check if investment from positions response
+        var parsedInvestment = entry.investment.split(":");
+        if ( !score && (parsedInvestment[1] == "tfsa" |  parsedInvestment[1] == "rrsp" |  parsedInvestment[1] == "dpsp")) {
+          score += 1;      // Assign a score to position investments that have a registered account
+        };
+      } else if ( !score && (entry.type == "tfsa" |  entry.type == "rrsp" |  entry.type == "dpsp" ))  {
+        score += 1;      // Assign a score to institution investments that have a registered account
+      };
+    });
+    return score;
+  };
+});  
+/**
+* NOTES for sorting groups for investments:
+** Create sorting groups for Investments (investment.type in ('tfsa', 'rrsp', 'dpsp'))
+** Send sorting groups data to sorting function (i.e. as column?)
+** Create function to remove unused columns after sorting.
+*/

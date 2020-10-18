@@ -768,7 +768,7 @@ $(function () {
    * Returns array of objects with the specified keys removed form each object. 
    *
    * @param {object} arguments contains the array of objects to be modified as 
-   * the first param followed by an number of columns/keys to be removed.
+   * the first argument followed by any number of columns/keys to be removed.
    * @return {array} objectArray is the array of objects, each with
    * property keyPart deleted.
    */
