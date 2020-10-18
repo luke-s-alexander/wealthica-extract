@@ -435,7 +435,7 @@ $(function () {
               csvStr += lineDelimiter;
             };
           } else if (element.type == "credit" && element.currency_value) {
-            var investment_data = [element.id, 'credit', element.currency,
+            var investment_data = [element.id, element.type, element.currency,
             // null,             -- Removed to simplify export file 
             // element.cash,     -- Removed to simplify export file
             element.currency_value];
@@ -676,8 +676,10 @@ $(function () {
         objectRowsArray[index - 1] = rowObject;
       };
     });
-
+    // Sorting parameters passed to dynmaicSortMultiple are hard-coded for now:
     sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("institution", "account", "-class", "symbol"));
+    // Delete institution row after using it for sorting
+    sortedObjectArray = deleteFromObjectArray('institution', sortedObjectArray);
     return objectArrayToCsv(sortedObjectArray);
   };
 
@@ -717,6 +719,13 @@ $(function () {
       return result * sortOrder;
     };
   };
+
+  /**
+   * Returns comma separated table as a string. 
+   *
+   * @param {object} objectRowArray is the array of objects to be converted.
+   * @return {string} csvStr is the CSV string returned.
+   */
   function objectArrayToCsv(objectRowsArray) {
     // Set formats
     var columnDelimiter = ',';
@@ -749,7 +758,38 @@ $(function () {
     });
     return csvStr;
   };
+
+  /**
+   * Returns array of objects with the specified keys removed form each object. 
+   *
+   * @param {string} keyPart is the property to be deleted from each object
+   * in the array of objects.
+   * @param {array} array is the array (of objects) to be modified.
+   * @return {array} objectArray is the array of objects, each with
+   * property keyPart deleted.
+   */
+  function deleteFromObjectArray(keyPart, array) {
+
+    array.forEach(function (entry) {
+      // Loop through array of objects
+      for (var k in entry) {
+        // Loop through the object
+        if (~k.indexOf(keyPart)) {
+          // If the current key contains the string we're looking for
+          delete obj[k]; // Delete obj[key];
+        };
+      };
+    });
+    return objectArray;
+  };
 });
+
+/**
+* NOTES for sorting groups for investments:
+** Create sorting groups for Investments (investment.type in ('tfsa', 'rrsp', 'dpsp'))
+** Send sorting groups data to sorting function (i.e. as column?)
+** Create function to remove unused columns after sorting.
+*/
 
 /***/ })
 /******/ ]);
