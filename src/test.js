@@ -144,7 +144,6 @@ $(function () {
     if(jsonData.length == 0) {
       return '';
     };
-    console.log(jsonData);
     // Create array of column headers
     let keys = [
         'category', 
@@ -191,7 +190,6 @@ $(function () {
       	// Loop through investments for each position
       	item.investments.forEach(element => {
       	  if(element.cash) {
-            console.log(element.cash, element.name);
           	var investment_data = [
               element.id,
               element.type,

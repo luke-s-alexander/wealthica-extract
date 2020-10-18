@@ -387,7 +387,6 @@ $(function () {
     if (jsonData.length == 0) {
       return '';
     };
-    console.log(jsonData);
     // Create array of column headers
     var keys = ['category', 'class', 'symbol', 'alias', 'account', 'account_type', 'account_currency',
     // 'quantity',         -- Removed to simplify export file
@@ -419,7 +418,6 @@ $(function () {
         // Loop through investments for each position
         item.investments.forEach(function (element) {
           if (element.cash) {
-            console.log(element.cash, element.name);
             var investment_data = [element.id, element.type, element.currency,
             // null,             -- Removed to simplify export file 
             // element.cash,     -- Removed to simplify export file

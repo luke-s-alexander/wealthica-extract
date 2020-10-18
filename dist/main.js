@@ -132,7 +132,7 @@ $(function () {
               cashCsv = _context.sent;
 
               // Create array of column headers
-              _keys = ['category', 'class', 'symbol', 'alias', 'account', 'account_type', 'account_currency',
+              _keys = ['category', 'class', 'symbol', 'alias', 'institution', 'account', 'account_type', 'account_currency',
               //'quantity',         -- Removed to simplify export file
               //'book_value',       -- Removed to simplify export file
               'market_value'
@@ -161,7 +161,7 @@ $(function () {
                   if (element.market_value) {
                     // split field investment into account, account_type and account_currency
                     var parsedInvestment = investment.split(":");
-                    var investment_data = [parsedInvestment,
+                    var investment_data = [element.institution, parsedInvestment,
                     // parsedInvestment[0], // -- Removed (type portion) to simplify export file
                     // parsedInvestment[1],    -- Removed (currency portion) to simplify export file
                     // element.quantity,    -- Removed to simplify export file
@@ -385,7 +385,7 @@ $(function () {
   function parseCashCustomToCsvFile(jsonData) {
     if (jsonData.length == 0) {
       return '';
-    }
+    };
     // Create array of column headers
     var keys = ['category', 'class', 'symbol', 'alias', 'account', 'account_type', 'account_currency',
     // 'quantity',         -- Removed to simplify export file
@@ -412,7 +412,8 @@ $(function () {
       // Only capture information for rows where institutions are in filter
       if (!addonOptionsInstitutions || parsedInstitutions.indexOf(item.id) != -1) {
         // Create shared column data for cash
-        shared = ['Cash', 'cash', 'Cash', null];
+        shared = ['Cash', 'cash', 'Cash', null, item.id // Capture ID of institution for sorting
+        ];
         // Loop through investments for each position
         item.investments.forEach(function (element) {
           if (element.cash) {
@@ -420,6 +421,23 @@ $(function () {
             // null,             -- Removed to simplify export file 
             // element.cash,     -- Removed to simplify export file
             element.cash];
+            // Add investment data to shared position data
+            investment_data = shared.concat(investment_data);
+            // Loop through investment data and create csv row
+            if (investment_data[9] != 0) {
+              investment_data.forEach(function (entry, index) {
+                if (index > 0 && index < investment_data.length) {
+                  csvStr += columnDelimiter;
+                };
+                csvStr += entry;
+              });
+              csvStr += lineDelimiter;
+            };
+          } else if (element.type == "credit" && element.currency_value) {
+            var investment_data = [element.id, 'credit', element.currency,
+            // null,             -- Removed to simplify export file 
+            // element.cash,     -- Removed to simplify export file
+            element.currency_value];
             // Add investment data to shared position data
             investment_data = shared.concat(investment_data);
             // Loop through investment data and create csv row
@@ -658,7 +676,7 @@ $(function () {
       };
     });
 
-    sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("account", "-class", "symbol"));
+    sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("institution", "account", "-class", "symbol"));
     return objectArrayToCsv(sortedObjectArray);
   };
 
