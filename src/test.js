@@ -644,9 +644,10 @@ $(function () {
       };
     });
     // Sorting parameters passed to dynmaicSortMultiple are hard-coded for now:
-    sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("institution","account","-class","symbol"));
+    sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("-score","institution","account","-class","symbol"));
     // Delete institution row after using it for sorting
     sortedObjectArray = deleteFromObjectArray('institution',sortedObjectArray);
+    sortedObjectArray = deleteFromObjectArray('score',sortedObjectArray);
     return objectArrayToCsv(sortedObjectArray);
   };
 
@@ -738,7 +739,7 @@ $(function () {
   	array.forEach(entry => {	  // Loop through array of objects
   	  for (var k in entry){       // Loop through the object
   	    if(~k.indexOf(keyPart)){  // If the current key contains the string we're looking for
-  	      delete array[k];          // Delete obj[key];
+  	      delete entry[k];          // Delete obj[key];
   	    };
   	  };
   	});
@@ -746,17 +747,23 @@ $(function () {
   };
 
 /**
- * Assigns a score (for sorting) to institutions if they have a registered account.
+ * Assigns a score (for sorting) to entries in an getInstitution or a getPosition
+ * response if they have a registered account.
  *
- * @param {object} institution is the institution to be assigned a score. 
- * @return {number} score is the sore given to the institution.
+ * @param {object} institution is the institution/position to be assigned a score. 
+ * @return {number} score is the score given to the institution/position.
  */
   function assignSortScore(institution) {
 
     var score = 0;
-    institution.investment.forEach(entry => {    // Loop through investments
-      if (!score && (entry.type == "tfsa" |  entry.type == "rrsp" |  entry.type == "dpsp" )) {
-        score += 1;      // Assign a score to those that have a registered account
+    institution.investments.forEach(entry => {    // Loop through investments
+      if ( entry.hasOwnProperty('investment') ) { // Check if investment from positions response
+        var parsedInvestment = entry.investment.split(":");
+        if ( !score && (parsedInvestment[1] == "tfsa" |  parsedInvestment[1] == "rrsp" |  parsedInvestment[1] == "dpsp")) {
+          score += 1;      // Assign a score to position investments that have a registered account
+        };
+      } else if ( !score && (entry.type == "tfsa" |  entry.type == "rrsp" |  entry.type == "dpsp" ))  {
+        score += 1;      // Assign a score to institution investments that have a registered account
       };
     });
     return score;
