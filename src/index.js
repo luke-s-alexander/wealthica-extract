@@ -331,7 +331,7 @@ $(function () {
 	        });
       });
       csvStr = csvStr.concat(cashCsv);
-      sortedCsvStr = sortCsv(csvStr);
+      var sortedCsvStr = sortCsv(csvStr);
       return encodeURIComponent(sortedCsvStr);
     } catch (error) { 
       console.log(error)
@@ -624,11 +624,11 @@ $(function () {
 
   function sortCsv (csvStr) { 
     // Capture the keys from header row
-    csvRowsArray = csvStr.split('\n');
-    keys = csvRowsArray[0].split(',');
+    var csvRowsArray = csvStr.split('\n');
+    var keys = csvRowsArray[0].split(',');
     
     // Build an array of rows as objects 
-    objectRowsArray = [];
+    var objectRowsArray = [];
     csvRowsArray.forEach((element, index) => {
       // Skip header row (index=0) and blank rows
       if (index > 0 && csvRowsArray[index] != '') {
@@ -645,7 +645,7 @@ $(function () {
       };
     });
     // Sorting parameters passed to dynmaicSortMultiple are hard-coded for now:
-    sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("-score","institution","account","-class","symbol"));
+    var sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("-score","institution","account","-class","symbol"));
     // Delete institution and score row after using them for sorting
     sortedObjectArray = deleteFromObjectArray(sortedObjectArray, 'institution', 'score');
     // sortedObjectArray = deleteFromObjectArray(sortedObjectArray);
@@ -700,7 +700,7 @@ $(function () {
       var csvStr = "";
 
       // Create header row
-      firstRowObject = objectRowsArray[0];
+      var firstRowObject = objectRowsArray[0];
       Object.keys(firstRowObject).forEach((value, index) => {
       if( (index > 0) && (index < Object.keys(firstRowObject).length) ) {
         csvStr += columnDelimiter;
