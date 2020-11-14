@@ -913,7 +913,7 @@ $(function () {
   // Parse Assets (Institutions response) JSON object into CSV string
   var parseAssetsCustomToCsvFile = function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(jsonData) {
-      var cashCsv, keys, columnDelimiter, lineDelimiter, csvColumnHeader, csvStr, shared;
+      var cashCsv, keys, columnDelimiter, lineDelimiter, csvColumnHeader, csvStr, shared, sortedCsvStr;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
