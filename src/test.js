@@ -331,7 +331,7 @@ $(function () {
 	        });
       });
       csvStr = csvStr.concat(cashCsv);
-      sortedCsvStr = sortCsv(csvStr);
+      var sortedCsvStr = sortCsv(csvStr);
       return encodeURIComponent(sortedCsvStr);
     } catch (error) { 
       console.log(error)
