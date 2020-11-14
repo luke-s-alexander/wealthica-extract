@@ -1,3 +1,5 @@
+const regeneratorRuntime = require("regenerator-runtime");
+
 var addon, addonOptions;
 
 $(function () {
