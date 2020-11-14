@@ -913,8 +913,7 @@ $(function () {
   // Parse Assets (Institutions response) JSON object into CSV string
   var parseAssetsCustomToCsvFile = function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(jsonData) {
-      var cashCsv, _keys, columnDelimiter, lineDelimiter, csvColumnHeader, csvStr, shared;
-
+      var cashCsv, keys, columnDelimiter, lineDelimiter, csvColumnHeader, csvStr, shared;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -942,7 +941,7 @@ $(function () {
               cashCsv = _context.sent;
 
               // Create array of column headers
-              _keys = ['score', 'category', 'class', 'symbol', 'alias', 'institution', 'account', 'account_type', 'account_currency',
+              keys = ['score', 'category', 'class', 'symbol', 'alias', 'institution', 'account', 'account_type', 'account_currency',
               //'quantity',         -- Removed to simplify export file
               //'book_value',       -- Removed to simplify export file
               'market_value'
@@ -955,7 +954,7 @@ $(function () {
               lineDelimiter = '\n';
               // Build header
 
-              csvColumnHeader = _keys.join(columnDelimiter);
+              csvColumnHeader = keys.join(columnDelimiter);
               csvStr = csvColumnHeader + lineDelimiter;
               shared = [];
               // Loop through position results
@@ -1469,11 +1468,11 @@ $(function () {
 
   function sortCsv(csvStr) {
     // Capture the keys from header row
-    csvRowsArray = csvStr.split('\n');
-    keys = csvRowsArray[0].split(',');
+    var csvRowsArray = csvStr.split('\n');
+    var keys = csvRowsArray[0].split(',');
 
     // Build an array of rows as objects 
-    objectRowsArray = [];
+    var objectRowsArray = [];
     csvRowsArray.forEach(function (element, index) {
       // Skip header row (index=0) and blank rows
       if (index > 0 && csvRowsArray[index] != '') {
@@ -1490,7 +1489,7 @@ $(function () {
       };
     });
     // Sorting parameters passed to dynmaicSortMultiple are hard-coded for now:
-    sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("-score", "institution", "account", "-class", "symbol"));
+    var sortedObjectArray = objectRowsArray.sort(dynamicSortMultiple("-score", "institution", "account", "-class", "symbol"));
     // Delete institution and score row after using them for sorting
     sortedObjectArray = deleteFromObjectArray(sortedObjectArray, 'institution', 'score');
     // sortedObjectArray = deleteFromObjectArray(sortedObjectArray);
@@ -1547,7 +1546,7 @@ $(function () {
     var csvStr = "";
 
     // Create header row
-    firstRowObject = objectRowsArray[0];
+    var firstRowObject = objectRowsArray[0];
     Object.keys(firstRowObject).forEach(function (value, index) {
       if (index > 0 && index < Object.keys(firstRowObject).length) {
         csvStr += columnDelimiter;
