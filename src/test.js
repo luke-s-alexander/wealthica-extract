@@ -206,7 +206,7 @@ $(function () {
         ];
       	// Loop through investments for each position
       	item.investments.forEach(element => {
-      	  if(element.cash) {
+      	  if(element.cash && element.type !== "loc") {
           	var investment_data = [
               element.id,
               element.type,
@@ -313,6 +313,7 @@ $(function () {
 	          var investment = element.investment;
 
 	          	// Only capture row data if market_value is not zero and not a loc account
+              console.log(investment);
 	          	if(element.market_value && investment[0] !== "loc") {
 	            // split field investment into account, account_type and account_currency
 		        	var parsedInvestment = investment.split(":");
