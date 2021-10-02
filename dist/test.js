@@ -936,7 +936,7 @@ $(function () {
                   var investment = element.investment;
 
                   // Only capture row data if market_value is not zero and not a loc account
-                  if (element.market_value && investment[1] !== "loc") {
+                  if (element.market_value && investment[0] !== "loc") {
                     // split field investment into account, account_type and account_currency
                     var parsedInvestment = investment.split(":");
                     var investment_data = [element.institution, parsedInvestment,
