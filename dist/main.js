@@ -421,7 +421,7 @@ $(function () {
         ];
         // Loop through investments for each position
         item.investments.forEach(function (element) {
-          if (element.cash) {
+          if (element.cash && element.type !== "loc") {
             var investment_data = [element.id, element.type, element.currency,
             // null,             -- Removed to simplify export file 
             // element.cash,     -- Removed to simplify export file
@@ -438,24 +438,26 @@ $(function () {
               });
               csvStr += lineDelimiter;
             };
-          } else if (element.type == "credit" && element.currency_value) {
-            var investment_data = [element.id, element.type, element.currency,
-            // null,             -- Removed to simplify export file 
-            // element.cash,     -- Removed to simplify export file
-            element.currency_value];
-            // Add investment data to shared position data
-            investment_data = shared.concat(investment_data);
-            // Loop through investment data and create csv row
-            if (investment_data[9] != 0) {
-              investment_data.forEach(function (entry, index) {
-                if (index > 0 && index < investment_data.length) {
-                  csvStr += columnDelimiter;
-                };
-                csvStr += entry;
-              });
-              csvStr += lineDelimiter;
+          }
+          // Take value from currency_value field for credit and loc assets
+          else if (element.currency_value && (element.type == "credit" || element.type == "loc")) {
+              var investment_data = [element.id, element.type, element.currency,
+              // null,             -- Removed to simplify export file 
+              // element.cash,     -- Removed to simplify export file
+              element.currency_value];
+              // Add investment data to shared position data
+              investment_data = shared.concat(investment_data);
+              // Loop through investment data and create csv row
+              if (investment_data[9] != 0) {
+                investment_data.forEach(function (entry, index) {
+                  if (index > 0 && index < investment_data.length) {
+                    csvStr += columnDelimiter;
+                  };
+                  csvStr += entry;
+                });
+                csvStr += lineDelimiter;
+              };
             };
-          };
         });
       };
     });

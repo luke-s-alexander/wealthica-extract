@@ -195,7 +195,7 @@ $(function () {
         ];
       	// Loop through investments for each position
       	item.investments.forEach(element => {
-      	  if(element.cash) {
+      	  if(element.cash && element.type !== "loc") {
           	var investment_data = [
               element.id,
               element.type,
@@ -218,7 +218,9 @@ $(function () {
               });
               csvStr += lineDelimiter
           	};
-          	} else if (element.type == "credit" && element.currency_value) {  
+          	} 
+            // Take value from currency_value field for credit and loc assets
+            else if (element.currency_value && (element.type == "credit" || element.type == "loc")) {  
             	var investment_data = [
 	              element.id,
 	              element.type,
