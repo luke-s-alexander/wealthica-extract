@@ -34,7 +34,7 @@
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "chunk-rename-webpack-plugin": "1.1.1",
-    "http-server": "^0.12.1",
+    "http-server": "^13.0.2",
     "jsdom": "^16.2.1",
     "jsdom-global": "^3.0.2",
     "mocha": "7.1.1",
