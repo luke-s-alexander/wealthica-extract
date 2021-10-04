@@ -18,7 +18,7 @@
     "es6-promise": "4.2.8",
     "eventemitter3": "4.0.7",
     "iframe-resizer": "4.2.10",
-    "js-channel": "1.0.1830",
+    "js-channel": "1.0.1839",
     "lodash": "~4.17.21",
     "serialize-javascript": "^3.1.0"
   },

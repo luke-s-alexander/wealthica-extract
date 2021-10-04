@@ -3081,10 +3081,10 @@ isstream@~0.1.2:
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
   integrity sha1-R+Y/evVa+m+S4VAOaQ64uFKcCZo=
 
-js-channel@1.0.1830:
-  version "1.0.1830"
-  resolved "https://registry.yarnpkg.com/js-channel/-/js-channel-1.0.1830.tgz#78b2a095c6e0d4c35f473f87a5afc17b11c3a510"
-  integrity sha512-QvsqXVgyBB3+ya0ovuDoYN5opG6WVC/fhUdXMIlY0oNF3j5GnWJ/TTyGdzzJB+U2BfOnRKXw8Gp5OwXde9Bs3w==
+js-channel@1.0.1839:
+  version "1.0.1839"
+  resolved "https://registry.yarnpkg.com/js-channel/-/js-channel-1.0.1839.tgz#c0ec6a7e3c78b28435bc2e0a6244d6ef5b0a0c90"
+  integrity sha512-0mhc2d8H9kLryjL3wTJw/fYZ4cbZGqgL7Q91slOhCwsCBzEKy7cx1mm39aXCILBQ7XHYeU5JRgrEWaTaoQr/cw==
 
 "js-tokens@^3.0.0 || ^4.0.0":
   version "4.0.0"
