@@ -832,16 +832,12 @@ $(function () {
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/**
- * Copyright (c) 2014-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-// This method of obtaining a reference to the global object needs to be
+/* WEBPACK VAR INJECTION */(function(global) {// This method of obtaining a reference to the global object needs to be
 // kept identical to the way it is obtained in runtime.js
-var g = (function() { return this })() || Function("return this")();
+var g =
+  typeof global === "object" ? global :
+  typeof window === "object" ? window :
+  typeof self === "object" ? self : this;
 
 // Use `getOwnPropertyNames` because not all browsers support calling
 // `hasOwnProperty` on the global `self` object in a worker. See #183.
@@ -854,7 +850,7 @@ var oldRuntime = hadRuntime && g.regeneratorRuntime;
 // Force reevalutation of runtime.js.
 g.regeneratorRuntime = undefined;
 
-module.exports = __webpack_require__(2);
+module.exports = __webpack_require__(3);
 
 if (hadRuntime) {
   // Restore the original runtime.
@@ -868,16 +864,46 @@ if (hadRuntime) {
   }
 }
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ }),
 /* 2 */
 /***/ (function(module, exports) {
 
-/**
- * Copyright (c) 2014-present, Facebook, Inc.
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || new Function("return this")();
+} catch (e) {
+	// This works if the window reference is available
+	if (typeof window === "object") g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {/**
+ * Copyright (c) 2014, Facebook, Inc.
+ * All rights reserved.
  *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * This source code is licensed under the BSD-style license found in the
+ * https://raw.github.com/facebook/regenerator/master/LICENSE file. An
+ * additional grant of patent rights can be found in the PATENTS file in
+ * the same directory.
  */
 
 !(function(global) {
@@ -1060,6 +1086,10 @@ if (hadRuntime) {
           resolve(result);
         }, reject);
       }
+    }
+
+    if (typeof global.process === "object" && global.process.domain) {
+      invoke = global.process.domain.bind(invoke);
     }
 
     var previousPromise;
@@ -1595,12 +1625,15 @@ if (hadRuntime) {
     }
   };
 })(
-  // In sloppy mode, unbound `this` refers to the global object, fallback to
-  // Function constructor if we're in global strict mode. That is sadly a form
-  // of indirect eval which violates Content Security Policy.
-  (function() { return this })() || Function("return this")()
+  // Among the various tricks for obtaining a reference to the global
+  // object, this seems to be the most reliable technique that does not
+  // use indirect eval (which violates Content Security Policy).
+  typeof global === "object" ? global :
+  typeof window === "object" ? window :
+  typeof self === "object" ? self : this
 );
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ })
 /******/ ]);
