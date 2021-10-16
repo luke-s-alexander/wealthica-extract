@@ -206,7 +206,9 @@ $(function () {
         ];
       	// Loop through investments for each position
       	item.investments.forEach(element => {
-      	  if(element.cash && element.type !== "loc") {
+          // Only capture data for elements where cash balance >0
+          // Filter out credit cards and locs (handled differently below)
+      	  if(element.cash && (element.type !== "credit" || element.type !== "loc")) {
           	var investment_data = [
               element.id,
               element.type,
