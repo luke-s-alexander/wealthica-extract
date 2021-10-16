@@ -1,6 +1,6 @@
 # luke-wealthica.js
 
-Add-on for Wealthica to view and export data into csv files
+Add-on for Wealthica to view and export data into csv files.
 
 ## Development
 
