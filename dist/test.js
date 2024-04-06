@@ -1379,44 +1379,48 @@ $(function () {
 
   // Parse Transactions JSON object into CSV string
   function parseTransactionsToCsvFile(jsonData) {
-    if (jsonData.length == 0) {
-      return '';
-    }
-    // Create array of column headers
-    var keys = ['account', 'account_type', 'account_currency', 'type', 'date', 'quantity', 'currency_amount', 'fee', 'symbol', 'name'];
-    // Set formats
-    var columnDelimiter = ',';
-    var lineDelimiter = '\n';
-    // Build header
-    var csvColumnHeader = keys.join(columnDelimiter);
-    var csvStr = csvColumnHeader + lineDelimiter;
-    var row = [];
-    // Loop through transaction results
-    jsonData.forEach(function (item) {
-      // Create row from transaction data
-      var investment = item.investment;
-      // split field investment into account, account_type and account_currency
-      var parsedInvestment = investment.split(":");
+    try {
+      if (jsonData.length == 0) {
+        return '';
+      }
+      // Create array of column headers
+      var keys = ['account', 'account_type', 'account_currency', 'type', 'date', 'quantity', 'currency_amount', 'fee', 'symbol', 'name'];
+      // Set formats
+      var columnDelimiter = ',';
+      var lineDelimiter = '\n';
+      // Build header
+      var csvColumnHeader = keys.join(columnDelimiter);
+      var csvStr = csvColumnHeader + lineDelimiter;
+      var row = [];
+      // Loop through transaction results
+      jsonData.forEach(function (item) {
+        // Create row from transaction data
+        var investment = item.investment;
+        // split field investment into account, account_type and account_currency
+        var parsedInvestment = investment.split(":");
 
-      row = [parsedInvestment, item.type, item.date, item.quantity, item.currency_amount, item.fee];
-      // Check to see if transaction references a security
-      if (_typeof(item.security) === "object") {
-        // Add security data if available
-        row = row.concat([item.security.symbol, item.security.name]);
-      } else {
-        // Add null placeholders if no security data
-        row.push(null, null);
-      };
-      // Loop through row data and create csv row
-      row.forEach(function (entry, index) {
-        if (index > 0 && index < row.length) {
-          csvStr += columnDelimiter;
-        }
-        csvStr += entry;
+        row = [parsedInvestment, item.type, item.date, item.quantity, item.currency_amount, item.fee];
+        // Check to see if transaction references a security
+        if (_typeof(item.security) === "object") {
+          // Add security data if available
+          row = row.concat([item.security.symbol, item.security.name]);
+        } else {
+          // Add null placeholders if no security data
+          row.push(null, null);
+        };
+        // Loop through row data and create csv row
+        row.forEach(function (entry, index) {
+          if (index > 0 && index < row.length) {
+            csvStr += columnDelimiter;
+          }
+          csvStr += entry;
+        });
+        csvStr += lineDelimiter;
       });
-      csvStr += lineDelimiter;
-    });
-    return encodeURIComponent(csvStr);
+      return encodeURIComponent(csvStr);
+    } catch (error) {
+      console.error("Error in parseTransactionsToCsvFile:", error);
+    }
   };
   // Parse Institutions JSON object into CSV string
   function exportCashCustomToCsvFile(jsonData) {
