@@ -595,20 +595,37 @@ $(function () {
   };  
   // Parse JSON object into CSV string
   function exportTransactionsToCsvFile(jsonData) {
-      console.log(jsonData);
-      let csvStr = parseTransactionsToCsvFile(jsonData);
-      let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
-      var today = new Date();
-      var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-      var time = today.getHours().toString() + today.getMinutes() + today.getSeconds();
+    // // Option 1: Download jsonData as CSV
+    //   console.log(jsonData);
+    //   let csvStr = parseTransactionsToCsvFile(jsonData);
+    //   let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
+    //   var today = new Date();
+    //   var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    //   var time = today.getHours().toString() + today.getMinutes() + today.getSeconds();
+      
+    //   let exportFileDefaultName = 'transactions_' + date + time + '.csv';
 
-      let exportFileDefaultName = 'transactions_' + date + time + '.csv';
+    //   var linkElement = document.createElement('a');
+    //   linkElement.setAttribute('href', dataUri);
+    //   linkElement.setAttribute('download', exportFileDefaultName);
+    //   linkElement.click();
 
+      // Option 2: Download jsonData as JSON
+      let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonData, null, 2)); 
+      let exportFileDefaultNameJSON = 'transactions.json';
       let linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.setAttribute('href', dataStr);
+      linkElement.setAttribute('download', exportFileDefaultNameJSON);
       linkElement.click();
   };
+
+  let exportFileDefaultNameJSON = 'transactions_' + date + time + '.json';
+  var linkElement = document.createElement('a');
+  linkElement.setAttribute('href', dataUri);
+  linkElement.setAttribute('download', exportFileDefaultNameJSON);
+  linkElement.click()
+
+
 
   // Parse JSON object into CSV string
   function exportPositionsToCsvFile(jsonData) {
