@@ -595,8 +595,8 @@ $(function () {
   };  
   // Parse JSON object into CSV string
   function exportTransactionsToCsvFile(jsonData) {
-      let csvStr = parseTransactionsToCsvFile(jsonData);
       console.log(jsonData);
+      let csvStr = parseTransactionsToCsvFile(jsonData);
       let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
       var today = new Date();
       var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
