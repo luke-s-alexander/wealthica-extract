@@ -1384,7 +1384,7 @@ $(function () {
         return '';
       }
       // Create array of column headers
-      var keys = ['account', 'account_type', 'account_currency', 'type', 'date', 'quantity', 'currency_amount', 'fee', 'symbol', 'name', 'category'];
+      var keys = ['account', 'account_type', 'account_currency', 'type', 'date', 'description', 'quantity', 'currency_amount', 'fee', 'symbol', 'name', 'category'];
       // Set formats
       var columnDelimiter = ',';
       var lineDelimiter = '\n';
@@ -1398,7 +1398,7 @@ $(function () {
 
         if (item.investment) {
           var parsedInvestment = item.investment.split(":");
-          row = [parsedInvestment, item.type, item.date, item.quantity, item.currency_amount, item.fee];
+          row = [parsedInvestment, item.type, item.date, item.description, item.quantity, item.currency_amount, item.fee];
         } else {
           // Handle cases where investment is missing 
           row = [['', '', ''], // Placeholder values for account fields
