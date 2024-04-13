@@ -1394,20 +1394,33 @@ $(function () {
       var row = [];
       // Loop through transaction results
       jsonData.forEach(function (item) {
-        // Create row from transaction data
-        var investment = item.investment;
-        // split field investment into account, account_type and account_currency
-        var parsedInvestment = investment.split(":");
+        var row = []; // Initialize row array
 
-        row = [parsedInvestment, item.type, item.date, item.quantity, item.currency_amount, item.fee];
-        // Check to see if transaction references a security
-        if (_typeof(item.security) === "object") {
-          // Add security data if available
-          row = row.concat([item.security.symbol, item.security.name]);
+        // Split investment object if it exists
+        if (item.investment) {
+          var parsedInvestment = item.investment.split(":");
+          row = [parsedInvestment, item.type, item.date, item.quantity, item.currency_amount, item.fee];
         } else {
-          // Add null placeholders if no security data
+          // Handle cases where investment is missing 
+          row = [['', '', ''], // Placeholder values for account fields
+          item.type, item.date, item.quantity, item.currency_amount, item.fee];
+        }
+
+        // Check to see if transaction references a security
+        if (item.security && _typeof(item.security) === "object") {
+          // Check if security exists
+          if (item.security.symbol) {
+            // Check if symbol exists within security
+            // Add security data if available
+            row = row.concat([item.security.symbol, item.security.name]);
+          } else {
+            // Add null placeholders if no symbol data within security
+            row.push(null, null);
+          }
+        } else {
+          // Add null placeholders if no security data at all
           row.push(null, null);
-        };
+        }
         // Loop through row data and create csv row
         row.forEach(function (entry, index) {
           if (index > 0 && index < row.length) {
@@ -1439,35 +1452,20 @@ $(function () {
   };;
   // Parse JSON object into CSV string
   function exportTransactionsToCsvFile(jsonData) {
-    // // Option 1: Download jsonData as CSV
-    //   console.log(jsonData);
-    //   let csvStr = parseTransactionsToCsvFile(jsonData);
-    //   let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
-    //   var today = new Date();
-    //   var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-    //   var time = today.getHours().toString() + today.getMinutes() + today.getSeconds();
+    console.log(jsonData);
+    var csvStr = parseTransactionsToCsvFile(jsonData);
+    var dataUri = 'data:text/csv;charset=utf-8,' + csvStr;
+    var today = new Date();
+    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    var time = today.getHours().toString() + today.getMinutes() + today.getSeconds();
 
-    //   let exportFileDefaultName = 'transactions_' + date + time + '.csv';
+    var exportFileDefaultName = 'transactions_' + date + time + '.csv';
 
-    //   var linkElement = document.createElement('a');
-    //   linkElement.setAttribute('href', dataUri);
-    //   linkElement.setAttribute('download', exportFileDefaultName);
-    //   linkElement.click();
-
-    // Option 2: Download jsonData as JSON
-    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonData, null, 2));
-    var exportFileDefaultNameJSON = 'transactions.json';
     var linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataStr);
-    linkElement.setAttribute('download', exportFileDefaultNameJSON);
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
     linkElement.click();
   };
-
-  var exportFileDefaultNameJSON = 'transactions_' + date + time + '.json';
-  var linkElement = document.createElement('a');
-  linkElement.setAttribute('href', dataUri);
-  linkElement.setAttribute('download', exportFileDefaultNameJSON);
-  linkElement.click();
 
   // Parse JSON object into CSV string
   function exportPositionsToCsvFile(jsonData) {
