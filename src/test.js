@@ -510,6 +510,7 @@ function parseTransactionsToCsvFile(jsonData) {
         'account_currency', 
         'type', 
         'date', 
+        'description',
         'quantity',  
         'currency_amount',  
         'fee',
@@ -534,6 +535,7 @@ function parseTransactionsToCsvFile(jsonData) {
             parsedInvestment,
             item.type,
             item.date,
+            item.description,
             item.quantity,
             item.currency_amount,
             item.fee
