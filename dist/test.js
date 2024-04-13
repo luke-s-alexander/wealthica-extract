@@ -1384,7 +1384,7 @@ $(function () {
         return '';
       }
       // Create array of column headers
-      var keys = ['account', 'account_type', 'account_currency', 'type', 'date', 'quantity', 'currency_amount', 'fee', 'symbol', 'name'];
+      var keys = ['account', 'account_type', 'account_currency', 'type', 'date', 'quantity', 'currency_amount', 'fee', 'symbol', 'name', 'category'];
       // Set formats
       var columnDelimiter = ',';
       var lineDelimiter = '\n';
@@ -1396,7 +1396,6 @@ $(function () {
       jsonData.forEach(function (item) {
         var row = []; // Initialize row array
 
-        // Split investment object if it exists
         if (item.investment) {
           var parsedInvestment = item.investment.split(":");
           row = [parsedInvestment, item.type, item.date, item.quantity, item.currency_amount, item.fee];
@@ -1420,6 +1419,15 @@ $(function () {
         } else {
           // Add null placeholders if no security data at all
           row.push(null, null);
+        }
+        // Check to see if transactions has a category
+        if (item.category) {
+          // Check if category exists
+          // Add security data if available
+          row = row.concat([item.category]);
+        } else {
+          // Add null placeholder if no category data
+          row.push(null);
         }
         // Loop through row data and create csv row
         row.forEach(function (entry, index) {

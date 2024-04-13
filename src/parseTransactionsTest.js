@@ -22,7 +22,8 @@ console.log(csv)
           'currency_amount',  
           'fee',
           'symbol', 
-          'name'
+          'name',
+          'category'
       ];
       // Set formats
       let columnDelimiter = ',';
@@ -72,6 +73,14 @@ console.log(csv)
         } else {
             // Add null placeholders if no security data at all
             row.push(null, null);
+        }
+        // Check to see if transactions has a category
+        if (item.category) { // Check if category exists
+            // Add security data if available
+            row = row.concat([item.category]);
+        } else {
+            // Add null placeholder if no category data
+            row.push(null);
         }
         // Loop through row data and create csv row
         row.forEach((entry, index) => {
