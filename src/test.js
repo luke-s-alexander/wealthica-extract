@@ -497,8 +497,24 @@ $(function () {
    return encodeURIComponent(csvStr);
   };
 
+async function loadJSON(filePath) {
+  const response = await fetch(filePath);
+  if (!response.ok) {
+    throw new Error('Could not load JSON file');
+  }
+  return await response.json();
+}
+
 // Parse Transactions JSON object into CSV string
   function parseTransactionsToCsvFile(jsonData) {
+    loadJSON('./transactions.json')
+      .then(data => {
+        console.log('JSON Data:', data);
+      })
+      .catch(error => {
+        console.error('Error loading JSON:', error);
+      });
+      
     try {
       if(jsonData.length == 0) {
         return '';
@@ -618,12 +634,6 @@ $(function () {
       linkElement.setAttribute('download', exportFileDefaultNameJSON);
       linkElement.click();
   };
-
-  let exportFileDefaultNameJSON = 'transactions_' + date + time + '.json';
-  var linkElement = document.createElement('a');
-  linkElement.setAttribute('href', dataUri);
-  linkElement.setAttribute('download', exportFileDefaultNameJSON);
-  linkElement.click()
 
 
 
