@@ -497,14 +497,22 @@ $(function () {
    return encodeURIComponent(csvStr);
   };
 
-// Parse Transactions JSON object into CSV string
-function parseTransactionsToCsvFile(jsonData) {
-  try {
-    if(jsonData.length == 0) {
-      return '';
-    }
-    // Create array of column headers
-    let keys = [
+  // Define the desired order of columns
+  function mapToDesiredColumns(row, desiredOrder){
+    const newRow = [];
+    desiredOrder.forEach(columnIndex => {
+      newRow.push(row[columnIndex]);
+    });
+    return newRow;
+  }
+  // Parse Transactions JSON object into CSV string
+  function parseTransactionsToCsvFile(jsonData) {
+    try {
+      if(jsonData.length == 0) {
+        return '';
+      }
+      // Create array of column headers
+      let keys = [
         'account',
         'account_type',
         'account_currency', 
@@ -517,79 +525,85 @@ function parseTransactionsToCsvFile(jsonData) {
         'symbol', 
         'name',
         'category'
-    ];
-    // Set formats
-    let columnDelimiter = ',';
-    let lineDelimiter = '\n';
-    // Build header
-    let csvColumnHeader = keys.join(columnDelimiter);
-    let csvStr = csvColumnHeader + lineDelimiter;
-    var row = [];
-   // Loop through transaction results
-   jsonData.forEach(item => {
-      let row = []; // Initialize row array
+      ];
+      // Picks date, description, category, amount, account as columns for export
+      // Use this if you want to change the order of columns or exported columns
+      const desiredOrder = [3, 1, 10, 6, 0]; 
+      // Set formats
+      let columnDelimiter = ',';
+      let lineDelimiter = '\n';
+      // Build header
+      let csvColumnHeader = keys.join(columnDelimiter);
+      let csvStr = csvColumnHeader + lineDelimiter;
+      var row = [];
+    // Loop through transaction results
+    jsonData.forEach(item => {
+        let row = []; // Initialize row array
 
-      if (item.investment) { 
-        let parsedInvestment = item.investment.split(":");
-        row = [
-            parsedInvestment,
-            item.type,
-            item.date,
-            item.description,
-            item.quantity,
-            item.currency_amount,
-            item.fee
-        ];
-      } else {
-        // Handle cases where investment is missing 
-        row = [
-            ['', '', ''],  // Placeholder values for account fields
-            item.type,
-            item.date,
-            item.quantity,
-            item.currency_amount,
-            item.fee
-        ];
-      }
+        if (item.investment) { 
+          let parsedInvestment = item.investment.split(":");
+          row = [
+              parsedInvestment,
+              item.type,
+              item.date,
+              item.description,
+              item.quantity,
+              item.currency_amount,
+              item.fee
+          ];
+        } else {
+          // Handle cases where investment is missing 
+          row = [
+              ['', '', ''],  // Placeholder values for account fields
+              item.type,
+              item.date,
+              item.quantity,
+              item.currency_amount,
+              item.fee
+          ];
+        }
 
-      // Check to see if transaction references a security
-      if (item.security && typeof item.security === "object") { // Check if security exists
-          if (item.security.symbol) {  // Check if symbol exists within security
-          // Add security data if available
-          row = row.concat([
-              item.security.symbol,
-              item.security.name
-          ]);
-          } else {
-          // Add null placeholders if no symbol data within security
-          row.push(null, null);
-          }
-      } else {
-          // Add null placeholders if no security data at all
-          row.push(null, null);
-      }
-      // Check to see if transactions has a category
-      if (item.category) { // Check if category exists
-          // Add security data if available
-          row = row.concat([item.category]);
-      } else {
-          // Add null placeholder if no category data
-          row.push(null);
-      }
-      // Loop through row data and create csv row
-      row.forEach((entry, index) => {
-          if( (index > 0) && (index < row.length) ) {
-              csvStr += columnDelimiter;
-          }
-          csvStr += entry;
+        // Check to see if transaction references a security
+        if (item.security && typeof item.security === "object") { // Check if security exists
+            if (item.security.symbol) {  // Check if symbol exists within security
+            // Add security data if available
+            row = row.concat([
+                item.security.symbol,
+                item.security.name
+            ]);
+            } else {
+            // Add null placeholders if no symbol data within security
+            row.push(null, null);
+            }
+        } else {
+            // Add null placeholders if no security data at all
+            row.push(null, null);
+        }
+        // Check to see if transactions has a category
+        if (item.category) { // Check if category exists
+            // Add security data if available
+            row = row.concat([item.category]);
+        } else {
+            // Add null placeholder if no category data
+            row.push(null);
+        }
+        // Change the order of columns or exported columns
+        row = mapToDesiredColumns(row, desiredOrder)
+        // Loop through row data and create csv row
+        row.forEach((entry, index) => {
+            if( (index > 0) && (index < row.length) ) {
+                csvStr += columnDelimiter;
+            }
+            csvStr += entry;
+        });
+        csvStr += lineDelimiter
       });
-      csvStr += lineDelimiter
-    });
-    return encodeURIComponent(csvStr);
-  } catch(error) {
-    console.error("Error in parseTransactionsToCsvFile:", error);
-  }
-};
+      console.log(csvStr)
+      return encodeURIComponent(csvStr);
+    } catch(error) {
+      console.error("Error in parseTransactionsToCsvFile:", error);
+    }
+  };
   // Parse Institutions JSON object into CSV string
   function exportCashCustomToCsvFile(jsonData) {
       let csvStr = parseCashCustomToCsvFile(jsonData);
