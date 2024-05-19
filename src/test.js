@@ -497,14 +497,14 @@ $(function () {
    return encodeURIComponent(csvStr);
   };
 
-  // Define the desired order of columns
-  function mapToDesiredColumns(row, desiredOrder){
-    const newRow = [];
-    desiredOrder.forEach(columnIndex => {
-      newRow.push(row[columnIndex]);
-    });
-    return newRow;
-  }
+  // // Define the desired order of columns
+  // function mapToDesiredColumns(row, desiredOrder){
+  //   const newRow = [];
+  //   desiredOrder.forEach(columnIndex => {
+  //     newRow.push(row[columnIndex]);
+  //   });
+  //   return newRow;
+  // }
   // Parse Transactions JSON object into CSV string
   function parseTransactionsToCsvFile(jsonData) {
     try {
@@ -526,9 +526,9 @@ $(function () {
         'name',
         'category'
       ];
-      // Picks date, description, category, amount, account as columns for export
-      // Use this if you want to change the order of columns or exported columns
-      const desiredOrder = [3, 1, 10, 6, 0]; 
+      // // Picks date, description, category, amount, account as columns for export
+      // // Use this if you want to change the order of columns or exported columns
+      // const desiredOrder = [3, 1, 10, 6, 0]; 
       // Set formats
       let columnDelimiter = ',';
       let lineDelimiter = '\n';
@@ -587,8 +587,8 @@ $(function () {
             // Add null placeholder if no category data
             row.push(null);
         }
-        // Change the order of columns or exported columns
-        row = mapToDesiredColumns(row, desiredOrder)
+        // // Change the order of columns or exported columns
+        // row = mapToDesiredColumns(row, desiredOrder)
         // Loop through row data and create csv row
         row.forEach((entry, index) => {
             if( (index > 0) && (index < row.length) ) {
